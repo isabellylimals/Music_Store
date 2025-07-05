@@ -1,5 +1,4 @@
-package models;
-
+package src.models;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,61 +8,78 @@ import java.util.List;
 *Cliente contem um telefone e os atributos de Pessoa
 */
 
-public class Cliente extends Pessoa{
+public class Cliente extends Pessoa {
     private String telefone;
     private static int proximoId = 1;
+    
+    private static List<Cliente> listaDeClientes = new ArrayList<>();
 
-	  public Cliente(String nome, String email, int id, String senha, String telefone){
-		  super(nome, email,id, senha, false);
-		  this.telefone=telefone;
+    public Cliente(String nome, String email, String senha, String telefone) {
+        super(nome, email, proximoId++, senha, false);
+        this.telefone = telefone;
     }
 
     public Cliente(){
+        super("", "", 0, "", false);
+        this.telefone = "";
     }
 
-    public String getTelefone( ){
-	    return telefone;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public String setTelefone(String telefone){
-	    this.telefone=telefone;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
-	
+
     public void cadastrarCliente(String nome, String email, String senha, String telefone) {
-      Cliente novoCliente = new Cliente( nome, email, senha, telefone);
-      clientes.add(novoCliente);
-  	  System.out.println("Cliente cadastrado com sucesso! ID: " + novoCliente.getId());
+        Cliente novoCliente = new Cliente(nome, email, senha, telefone);
+        listaDeClientes.add(novoCliente);
+        System.out.println("Cliente cadastrado com sucesso! ID: " + novoCliente.getId());
+    }
+
+    private Cliente buscarPorId(int id) {
+        for (Cliente cliente : listaDeClientes) {
+            if (cliente.getId() == id) {
+                return cliente;
+            }
+        }
+        return null;
     }
 
     public void exibirDadosCadastrais(int id) {
-      Cliente cliente = buscarPorId(id);
-      if (cliente != null) {
-          System.out.println("\nInformacoes do cliente");
-        	System.out.println("ID: " + cliente.getId());
-        	System.out.println("Nome: " + cliente.getNome());
-          System.out.println("Email: " + cliente.getEmail());
-        	System.out.println("Telefone: " + cliente.getTelefone());
+        Cliente clienteEncontrado = buscarPorId(id);
+
+        if (clienteEncontrado != null) {
+            System.out.println("\nInformações do cliente:");
+            System.out.println("ID: " + clienteEncontrado.getId());
+            System.out.println("Nome completo: " + clienteEncontrado.getNome());
+            System.out.println("Endereço de e-mail: " + clienteEncontrado.getEmail());
+            System.out.println("Número de telefone: " + clienteEncontrado.getTelefone());
         } else {
-          System.out.println("Cliente não encontrado!");
+            System.out.println("Cliente não encontrado!");
         }
     }
-   
+
     public void consultarTodosClientes() {
-      System.out.println("\n");
-      for (Cliente c : clientes) {
-          System.out.println("ID: " + c.getId() + " | Nome: " + c.getNome() + " | Email: " + c.getEmail());
-      }
-      System.out.println("Total: " + clientes.size() + " clientes");
+        if (listaDeClientes.isEmpty()) {
+            System.out.println("Nenhum cliente cadastrado.");
+            return;
+        }
+        for (Cliente cliente : listaDeClientes) {
+            System.out.print(
+                    "ID: " + cliente.getId() + " | Nome: " + cliente.getNome() + " | Email: " + cliente.getEmail() + "\n");
+        }
+        System.out.println("Total: " + listaDeClientes.size() + " clientes");
     }
 
-    
     public void alterarCadastro(int id, String novoNome, String novoEmail, String novaSenha, String novoTelefone) {
-        Cliente cliente = buscarPorId(id);
-        if (cliente != null) {
-            cliente.setNome(novoNome);
-            cliente.setEmail(novoEmail);
-            cliente.setSenha(novaSenha);
-            cliente.setTelefone(novoTelefone);
+        Cliente clienteEncontrado = buscarPorId(id);
+        if (clienteEncontrado != null) {
+            clienteEncontrado.setNome(novoNome);
+            clienteEncontrado.setEmail(novoEmail);
+            clienteEncontrado.setSenha(novaSenha);
+            clienteEncontrado.setTelefone(novoTelefone);
             System.out.println("Cadastro alterado com sucesso!");
         } else {
             System.out.println("Cliente não encontrado!");
@@ -71,28 +87,19 @@ public class Cliente extends Pessoa{
     }
 
     public void removerCliente(int id) {
-       	 Cliente cliente = buscarPorId(id);
-     	   if (cliente != null) {
-            clientes.remove(cliente);
+        Cliente clienteEncontrado = buscarPorId(id);
+        if (clienteEncontrado != null) {
+            listaDeClientes.remove(clienteEncontrado);
             System.out.println("Cliente removido com sucesso!");
         } else {
             System.out.println("Cliente não encontrado!");
         }
     }
 
-    private Cliente buscarPorId(int id) {
-        for (Cliente c : clientes) {
-            if (c.getId() == id) {
-                return c;
-            }
-        }
-        return null;
-    }
-  
     @Override
-	  public String toString(){
-		  String s=super.toString();
-      s+="Telefone: " + getTelefone() +"\n";
-		  return s;
+    public String toString() {
+        String informacoesDoCliente = super.toString();
+        informacoesDoCliente += "Número de telefone: " + getTelefone() + "\n";
+        return informacoesDoCliente;
     }
 }
