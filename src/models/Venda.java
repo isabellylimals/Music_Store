@@ -159,6 +159,18 @@ public void finalizarVenda(Scanner leitor, Cliente cadastro) {
     System.out.println("Venda finalizada com sucesso!");
     exibirResumo();
 }
+// isa add metodo apenas de teste public void listarItensVenda() {
+    public void listarItensVenda() {
+    if (itensVenda.isEmpty()) {
+        System.out.println("Nenhum item adicionado à venda.");
+        return;
+    }
+
+    System.out.println("Itens na venda:");
+    for (ItemVenda item : itensVenda) {
+        System.out.println(item); 
+    }
+}
 
 
 }
