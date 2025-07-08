@@ -1,6 +1,7 @@
 package src.models;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 public class Venda {
 private int id;
@@ -102,6 +103,62 @@ public double calculaTotal() {
     return total;
 }
 
+public void finalizarVenda(Scanner leitor, Cliente cadastro) {
+    System.out.print("Digite o ID do cliente que está comprando: ");
+    int idCliente = leitor.nextInt();
+    leitor.nextLine(); // limpar buffer
+
+    Cliente clienteSelecionado = cadastro.buscarPorId(idCliente);
+
+    if (clienteSelecionado == null) {
+        System.out.println("Cliente não encontrado. Venda cancelada.");
+        return;
+    }
+
+    this.cliente = clienteSelecionado; 
+
+    String continuar;
+    do {
+        System.out.println("Produtos disponíveis:");
+        Produto.exibirTodosProdutos();
+
+        System.out.print("Digite o ID do produto que deseja comprar: ");
+        int idEscolhido = leitor.nextInt();
+        Produto produtoSelecionado = Produto.buscarPorId(idEscolhido);
+
+        if (produtoSelecionado == null) {
+            System.out.println("Produto não encontrado.");
+        } else {
+            System.out.println("Produto selecionado:");
+            produtoSelecionado.exibirInformacoes();
+
+            System.out.print("Digite a quantidade que deseja comprar: ");
+            int quantidade = leitor.nextInt();
+
+            if (quantidade > produtoSelecionado.getQtdEstoque()) {
+                System.out.println("Estoque insuficiente! Produto disponível : " + produtoSelecionado.getQtdEstoque());
+            } else {
+                boolean sucesso = produtoSelecionado.reduzirEstoque(quantidade);
+                if (sucesso) {
+                    ItemVenda itemVenda = new ItemVenda(quantidade,produtoSelecionado);
+                    adicionarItemVenda(itemVenda);
+                    System.out.println("Item adicionado à venda com sucesso!");
+                } else {
+                    System.out.println("Erro ao reduzir estoque. Item não adicionado.");
+                }
+            }
+        }
+
+        leitor.nextLine();
+        System.out.print("Deseja adicionar outro produto? (s/n): ");
+        continuar = leitor.nextLine();
+
+    } while (continuar.equalsIgnoreCase("s"));
+
+    calculaTotal();
+    System.out.println("Venda finalizada com sucesso!");
+    exibirResumo();
+}
 
 
 }

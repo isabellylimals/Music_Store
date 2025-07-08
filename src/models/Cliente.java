@@ -38,7 +38,7 @@ public class Cliente extends Pessoa {
         System.out.println("Cliente cadastrado com sucesso! ID: " + novoCliente.getId());
     }
 
-    private Cliente buscarPorId(int id) {
+    public Cliente buscarPorId(int id) {
         for (Cliente cliente : listaDeClientes) {
             if (cliente.getId() == id) {
                 return cliente;
