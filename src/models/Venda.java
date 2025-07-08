@@ -93,6 +93,14 @@ public void removerItem(int idProcurar) {
 }
 
 
+public double calculaTotal() {
+    double total = 0.0;
+    for (ItemVenda item : itensVenda) {
+        total += item.calcularSubTotal();
+    }
+    this.valorTotal = total;
+    return total;
+}
 
 
 
