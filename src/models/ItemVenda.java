@@ -4,8 +4,9 @@ public class ItemVenda {
    private Produto produto; 
 
     
-    public ItemVenda(int quantidade) {
+    public ItemVenda(int quantidade, Produto produto) {
         this.quantidade = quantidade;
+        this.produto= produto;
     }
 
 
