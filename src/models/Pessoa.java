@@ -47,6 +47,9 @@ public class Pessoa {
   }
 
   public void setEmail(String email) {
+    if (email ==null || !email.contains("@")){
+      throw new IllegalArgumentException("Email inválido");
+    }
     this.email = email;
   }
 

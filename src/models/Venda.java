@@ -11,6 +11,7 @@ Cliente cliente;
 
 private ArrayList <ItemVenda> itensVenda = new ArrayList<>();
 //private ArrayList<Venda> vendas= new ArrayList<>();
+
  //incluir cliente dps em todos os metodos que precisa
 public Venda(int id, Date data, Cliente cliente){
     this.id= id;
@@ -58,6 +59,7 @@ public void exibirResumo() {
         System.out.println("Cliente: " + cliente.getNome() + " (ID: " + cliente.getId() + ")");
     }
     System.out.println("Itens da venda:");
+
     for (ItemVenda item : itensVenda) {
         System.out.println("- " + item.getProduto().getNome() + " x" + item.getQuantidade() +
                 " = R$ " + item.calcularSubTotal());
@@ -161,16 +163,16 @@ public void finalizarVenda(Scanner leitor, Cliente cadastro) {
 }
 // isa add metodo apenas de teste public void listarItensVenda() {
     public void listarItensVenda() {
-    if (itensVenda.isEmpty()) {
-        System.out.println("Nenhum item adicionado à venda.");
-        return;
-    }
+        if (itensVenda.isEmpty()) {
+            System.out.println("Nenhum item adicionado à venda.");
+            return;
+        }
 
-    System.out.println("Itens na venda:");
-    for (ItemVenda item : itensVenda) {
-        System.out.println(item); 
+        System.out.println("Itens na venda:");
+        for (ItemVenda item : itensVenda) {
+            System.out.println(item); 
+        }
     }
-}
 
 
 }

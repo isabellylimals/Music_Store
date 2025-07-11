@@ -1,7 +1,8 @@
 package src.models;
+
 public class ItemVenda {
     private int quantidade;
-   private Produto produto; 
+    private Produto produto; 
 
     
     public ItemVenda(int quantidade, Produto produto) {
@@ -9,30 +10,22 @@ public class ItemVenda {
         this.produto= produto;
     }
 
-
-
     public int getQuantidade() {
         return quantidade;
     }
 
-
-
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
     }
-
-
 
     @Override
     public String toString() {
         return "ItemVenda: \nquantidade:" + quantidade;
     }
 
-public Produto getProduto(){
-    return produto;
-}
-
-
+    public Produto getProduto(){
+        return produto;
+    }
     
     public double calcularSubTotal(){
         if(produto!= null){
@@ -44,4 +37,3 @@ public Produto getProduto(){
     }
 
 }
-
