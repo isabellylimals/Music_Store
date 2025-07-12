@@ -20,7 +20,7 @@ public class ItemVenda {
 
     @Override
     public String toString() {
-        return "ItemVenda: \nquantidade:" + quantidade;
+        return "Quantidade: " + quantidade + "|" + (produto != null ? produto.toString() : "Produto não definido");
     }
 
     public Produto getProduto(){
