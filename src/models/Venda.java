@@ -1,6 +1,7 @@
 package src.models;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class Venda {
@@ -8,6 +9,8 @@ private int id;
 private Date data;
 private double valorTotal;
 Cliente cliente;
+
+private static List<Venda> todasAsVendas = new ArrayList<>();
 
 private ArrayList <ItemVenda> itensVenda = new ArrayList<>();
 //private ArrayList<Venda> vendas= new ArrayList<>();
@@ -47,7 +50,8 @@ public void setValorTotal(double valorTotal) {
 
 @Override
 public String toString() {
-    return "\nID: " + id + "\nData da Venda: " + data + "\nValor Total da venda: " + valorTotal;
+    return "\nID: " + id + "\nData da Venda: " + data + "\nValor Total da venda: " + valorTotal + "\n" +
+            "Cliente: " + (cliente != null ? cliente.getNome() : "Nenhum cliente associado");
 }
 
 public void exibirResumo() {
