@@ -2,6 +2,8 @@ package src.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import DAO.ClienteDao;
+
 /*
 *Classe para representar um cliente
 *Cliente é um tipo de pessoa
@@ -33,9 +35,22 @@ public class Cliente extends Pessoa {
     }
 
     public void cadastrarCliente(String nome, String email, String senha, String telefone) {
+        ClienteDao dao = new ClienteDao();
+        int proximoId = dao.obterId();
+
         Cliente novoCliente = new Cliente(nome, email, senha, telefone);
+        novoCliente.setId(proximoId);
+
         listaDeClientes.add(novoCliente);
+
+        dao.cadastrar(novoCliente);
+
         System.out.println("Cliente cadastrado com sucesso! ID: " + novoCliente.getId());
+    }
+
+    public Cliente buscarClientePorId(int id) {
+        ClienteDao dao = new ClienteDao();
+        return dao.buscar(id);
     }
 
     public Cliente buscarPorId(int id) {
@@ -48,14 +63,15 @@ public class Cliente extends Pessoa {
     }
 
     public void exibirDadosCadastrais(int id) {
-        Cliente clienteEncontrado = buscarPorId(id);
+        Cliente clienteEncontrado = buscarClientePorId(id);
 
         if (clienteEncontrado != null) {
-            System.out.println("\nInformações do cliente:");
+            System.out.println("Informações do cliente:");
             System.out.println("ID: " + clienteEncontrado.getId());
             System.out.println("Nome completo: " + clienteEncontrado.getNome());
             System.out.println("Endereço de e-mail: " + clienteEncontrado.getEmail());
             System.out.println("Número de telefone: " + clienteEncontrado.getTelefone());
+
         } else {
             System.out.println("Cliente não encontrado!");
         }
@@ -68,7 +84,8 @@ public class Cliente extends Pessoa {
         }
         for (Cliente cliente : listaDeClientes) {
             System.out.print(
-                    "ID: " + cliente.getId() + " | Nome: " + cliente.getNome() + " | Email: " + cliente.getEmail() + "\n");
+                    "ID: " + cliente.getId() + " | Nome: " + cliente.getNome() + " | Email: " + cliente.getEmail()
+                            + "\n");
         }
         System.out.println("Total: " + listaDeClientes.size() + " clientes");
     }
