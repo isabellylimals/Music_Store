@@ -1,5 +1,8 @@
 package src.utils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class Tratativas {
@@ -108,6 +111,7 @@ public class Tratativas {
         return data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    
-
+    public static boolean validarEmail(String email) {
+    return email.matches("^[\\w](\\.?[\\w-])*@[\\w-]+\\.[a-zA-Z]{2,}$");
+}
 }
