@@ -88,4 +88,26 @@ public class Tratativas {
             System.out.println("Numero inválido. Digite pelo menos 10 numeros.");
         }
     }
+
+    public static LocalDate lerData() {
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/mm/yyyy");
+        
+        while (true) {
+            System.out.print("Digite a data (DD/MM/AAAA): ");
+            String entrada = leitor.nextLine().trim();
+            
+            try {
+                return LocalDate.parse(entrada, formatador);
+            } catch (DateTimeParseException e) {
+                System.out.println("Data inválida! Formato correto: DD/MM/AAAA");
+            }
+        }
+    }
+
+    public static String formatarData(LocalDate data) {
+        return data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+
+    
+
 }
