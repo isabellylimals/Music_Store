@@ -2,6 +2,8 @@ package src.models;
 import java.util.Date;
 import java.util.Scanner;
 
+import src.utils.Tratativas;
+
 public class Main {
     public static void main(String[] args) {
         Scanner leitor = new Scanner(System.in);
@@ -35,7 +37,16 @@ public class Main {
                     System.out.print("Digite o nome: ");
                     String nome = leitor.nextLine();
                     System.out.print("Digite o email: ");
-                    String email = leitor.nextLine();
+                    String email;
+                        while (true) {
+                            System.out.print("Digite o email: ");
+                            email = leitor.nextLine();
+                            if (Tratativas.validarEmail(email)) {
+                                break;
+                            } else {
+                                System.out.println("Email inválido! Tente novamente.");
+                            }
+                        }
                     System.out.print("Digite a senha: ");
                     String senha = leitor.nextLine();
                     System.out.print("Digite o telefone: ");
