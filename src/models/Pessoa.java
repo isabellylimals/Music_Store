@@ -9,6 +9,7 @@ public class Pessoa {
   private int id;
   private String senha;
   private boolean administrador; //true: administrador , false: cliente
+  private boolean ativo;
 
   public Pessoa(String nome, String email, int id, String senha, boolean administrador) {
     this.nome = nome;
@@ -16,6 +17,7 @@ public class Pessoa {
     this.id = id;
     this.senha = senha;
     this.administrador = administrador;
+    this.ativo=true;
   }
 
   public String getNome() {
@@ -69,8 +71,25 @@ public class Pessoa {
     this.administrador = "Sim".equalsIgnoreCase(administrador);
   }
 
+  public boolean isAtivo(){
+    return ativo;
+  }
+
+  public void ativaConta(){
+    this.ativo=true;
+    System.out.println("Conta ativa com sucesso!");
+  }
+
+  public String getStatus() {
+      return ativo ? "Ativo" : "Inativo";
+  }
+
   public boolean login(String email, String senha) {
-    return this.email.equals(email) && this.senha.equals(senha);
+      if (!this.ativo) {
+          System.out.println("Login falhou: conta desativada");
+          return false;
+      }
+      return this.email.equals(email) && this.senha.equals(senha);
   }
 
   public void criarNovoLogin(String email, String senha) {
@@ -85,6 +104,7 @@ public class Pessoa {
     resultado += "Nome completo: " + getNome() + "\n";
     resultado += "Endereço de e-mail: " + getEmail() + "\n";
     resultado += "Perfil de acesso: " + (isAdministrador() ? "Administrador" : "Cliente");
+    resultado += "Status da conta: " + getStatus();
     return resultado;
   }
 }
