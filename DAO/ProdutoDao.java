@@ -1,0 +1,137 @@
+package DAO;
+
+import src.models.Produto;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import src.conection.Conexao;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class ProdutoDao {
+    public static void cadastrar(Produto produto) {
+        String sql = "INSERT INTO produtos (id, nome, genero, artista, anoLancamento, preco, qtdEstoque, disponivel) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement comandoPreparado  = null;
+
+        try {
+            comandoPreparado  = Conexao.getConexao().prepareStatement(sql);
+
+            comandoPreparado .setInt(1, produto.getId());
+            comandoPreparado .setString(2, produto.getNome());
+            comandoPreparado .setString(3, produto.getGenero());
+            comandoPreparado .setString(4, produto.getArtista());
+            comandoPreparado .setInt(5, produto.getAnoLancamento());
+            comandoPreparado .setDouble(6, produto.getPreco());
+            comandoPreparado .setInt(7, produto.getQtdEstoque());
+            comandoPreparado .setBoolean(8, produto.isDisponivel());
+
+            comandoPreparado.executeUpdate();
+            System.out.println("Produto inserido com sucesso no banco!");
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao inserir produto no banco: ");
+            e.printStackTrace();
+        }
+    }
+
+    public static int obterId() {
+        String sql = "SELECT MAX(id) AS max_id FROM produtos";
+        PreparedStatement comandoPreparado = null;
+
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            ResultSet resultado = comandoPreparado.executeQuery();
+
+            if (resultado.next()) {
+                int ultimoId = resultado.getInt("max_id");
+                return ultimoId + 1;
+            } else {
+                return 1; 
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 1; // fallback
+        }
+    }
+
+    public static Produto buscar(int id) {
+        String sql = "SELECT * FROM produtos WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
+
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, id);
+            ResultSet resultado = comandoPreparado.executeQuery();
+
+            if (resultado.next()) {
+                String nome = resultado.getString("nome");
+                String genero = resultado.getString("genero");
+                String artista = resultado.getString("artista");
+                int anoLancamento = resultado.getInt("anoLancamento");
+                double preco = resultado.getDouble("preco");
+                int qtdEstoque = resultado.getInt("qtdEstoque");
+                boolean disponivel = resultado.getBoolean("disponivel");
+
+                Produto produto = new Produto(nome, genero, artista, anoLancamento,preco,qtdEstoque);
+                produto.setId(id); 
+                produto.setDisponivel(disponivel);
+
+                return produto;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static List<Produto> listarTodos() {
+    List<Produto> produtos = new ArrayList<>();
+    String sql = "SELECT * FROM produtos";
+    PreparedStatement comandoPreparado = null;
+
+    try {
+        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+        ResultSet resultado = comandoPreparado.executeQuery();
+
+        while (resultado.next()) {
+            int id = resultado.getInt("id");
+            String nome = resultado.getString("nome");
+            String genero = resultado.getString("genero");
+            String artista = resultado.getString("artista");
+            int anoLancamento = resultado.getInt("anoLancamento");
+            double preco = resultado.getDouble("preco");
+            int qtdEstoque = resultado.getInt("qtdEstoque");
+            boolean disponivel = resultado.getBoolean("disponivel");
+
+            Produto p = new Produto(nome, genero, artista, anoLancamento, preco, qtdEstoque);
+            p.setId(id);
+            p.setDisponivel(disponivel);
+
+            produtos.add(p);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return produtos;
+}
+
+public static void atualizarDisponibilidade(int id, boolean disponivel) {
+    String sql = "UPDATE produtos SET disponivel = ? WHERE id = ?";
+    try (PreparedStatement stmt = Conexao.getConexao().prepareStatement(sql)) {
+        stmt.setBoolean(1, disponivel);
+        stmt.setInt(2, id);
+        stmt.executeUpdate();
+    } catch (SQLException e) {
+        System.out.println("Erro ao atualizar disponibilidade do produto.");
+        e.printStackTrace();
+    }
+}
+
+
+}
