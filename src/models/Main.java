@@ -8,6 +8,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner leitor = new Scanner(System.in);
         Cliente cadastro = new Cliente();
+        Produto.carregarProdutosDoBanco();
          int idVenda = 1;
         Venda v = new Venda(idVenda, new Date(), cadastro);
        
@@ -121,11 +122,15 @@ public class Main {
                 v.finalizarVenda(leitor, cadastro);
                     break;
                 case 9:
-                     Produto.exibirTodosProdutos();
-                
+                     Produto.exibirProdutosCliente();
                 
                 break;
                 case 10:
+                Produto.exibirTodosProdutos();
+            break;
+            case 11:
+            int i = leitor.nextInt();
+                    Produto.excluirProduto(i);
             break;
                 case 0:
                     System.out.println("Saindo...");
