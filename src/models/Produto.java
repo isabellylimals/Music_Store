@@ -2,9 +2,10 @@ package src.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import DAO.ProdutoDao;
 
 public class Produto {
-    private static int proximoIdProd = 1;
+    //private static int proximoIdProd = 1;
 
     private int id;
     private String nome;
@@ -13,17 +14,19 @@ public class Produto {
     private int anoLancamento;
     private double preco;
     private int qtdEstoque;
+    private boolean disponivel;
 
     private static List<Produto> listaDeProdutos = new ArrayList<>();
 
        public Produto(String nome, String genero, String artista, int anoLancamento, double preco, int qtdEstoque) {
-        this.id = proximoIdProd++;
+        this.id = ProdutoDao.obterId();
         this.nome = nome;
         this.genero = genero;
         this.artista = artista;
         this.anoLancamento = anoLancamento;
         this.preco = preco;
         this.qtdEstoque = qtdEstoque;
+        this.disponivel = true;
     }
 
     //Funções para os clientes
@@ -39,6 +42,22 @@ public class Produto {
         System.out.println("Quantidade em Estoque: " + qtdEstoque);
     }
 
+    public static void carregarProdutosDoBanco() {
+        List<Produto> produtosDoBanco = ProdutoDao.listarTodos();
+        for (Produto produto : produtosDoBanco) {//caso seja chamado mais de 1 vez, evita duplicação
+            boolean jaExiste = false;
+            for (Produto existente : listaDeProdutos) {
+                if (existente.getId() == produto.getId()) {
+                    jaExiste = true;
+                    break;
+                }
+            }
+            if (!jaExiste) {
+                listaDeProdutos.add(produto);
+            }
+        }
+    }
+
     // após cada compra o estoque vai diminuir
     public boolean reduzirEstoque(int quantidade) {
         if (quantidade <= qtdEstoque) {
@@ -48,6 +67,23 @@ public class Produto {
         return false;
     }
 
+    public static void exibirProdutosCliente() {//produtos excluidos são false
+    boolean encontrouDisponivel = false;//logo os clientes não podem visualizar
+
+    System.out.println("=== Produtos Disponíveis para Compra ===");
+    for (Produto produto : listaDeProdutos) {
+        if (produto.isDisponivel()) {
+            System.out.println(produto);
+            encontrouDisponivel = true;
+        }
+    }
+
+    if (!encontrouDisponivel) {
+        System.out.println("Nenhum produto disponível para clientes no momento.");
+    }
+}
+
+
      public static void exibirTodosProdutos() {
         if (listaDeProdutos.isEmpty()) {
             System.out.println("Nenhum produto cadastrado.");
@@ -55,47 +91,60 @@ public class Produto {
         }
 
         System.out.println("=== Lista de Produtos ===");
-        for (Produto p : listaDeProdutos) {
-            System.out.println(p);
+        for (Produto produto : listaDeProdutos) {
+            System.out.println(produto);
         }
     }
 
     //Funções adm
 
-    public void alterarProduto(String nome, String genero, String artista, int ano, double preco, int estoque) {
+    public void alterarProduto(String nome, String genero, String artista, int ano, double preco, int estoque, boolean disponivel) {
         this.nome = nome;
         this.genero = genero;
         this.artista = artista;
         this.anoLancamento = ano;
         this.preco = preco;
         this.qtdEstoque = estoque;
+        this.disponivel = disponivel;
         System.out.println("Produto alterado com sucesso!");
     }
 
     public static Produto buscarPorId(int id) {
-        for (Produto p : listaDeProdutos) {
-            if (p.getId() == id) {
-                return p;
+        for (Produto produto : listaDeProdutos) {
+            if (produto.getId() == id) {
+                return produto;
             }
         }
         return null;
     }
 
-    public static void removerProduto(int id) {
-        Produto p = buscarPorId(id);
-        if (p != null) {
-            listaDeProdutos.remove(p);
+    public static void excluirProduto(int id) { //não vai excluir do banco de dados
+        Produto produto = buscarPorId(id);
+        if (produto != null) {
+            produto.setDisponivel(false);//vai fazer com que disponivel fique false e os clientes não possam ver
+
+            ProdutoDao.atualizarDisponibilidade(id, false);
+
             System.out.println("Produto removido");
         } else {
             System.out.println("Produto não encontrado.");
         }
     }
 
-    public static void cadastrarProduto(Produto p){
-        listaDeProdutos.add(p);
-        System.out.println("O produto " + p.getNome() + " foi cadastrado com sucesso");
+    public static void cadastrarProduto(Produto produto){
+        int proximoId = ProdutoDao.obterId();
+        
+        produto.setId(proximoId);
+
+        listaDeProdutos.add(produto);
+        ProdutoDao.cadastrar(produto);
+
+        System.out.println("O produto " + produto.getNome() + " foi cadastrado com sucesso");
     }
 
+    public Produto buscarProdutoPorId(int id) {
+        return ProdutoDao.buscar(id);
+    }
     
     public void reporEstoque(int quantidade) {
         this.qtdEstoque += quantidade;
@@ -105,6 +154,10 @@ public class Produto {
     public String toString() {
         return String.format("ID: %d | Nome: %s | Artista: %s | Gênero: %s | Preço: R$ %.2f | Estoque: %d",
                 id, nome, artista, genero, preco, qtdEstoque);
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {
@@ -158,5 +211,13 @@ public class Produto {
     public void setQtdEstoque(int qtdEstoque) {
         this.qtdEstoque = qtdEstoque;
     }
+
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
+    } 
     
 }
