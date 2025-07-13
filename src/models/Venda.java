@@ -112,7 +112,7 @@ public double calculaTotal() {
 public void finalizarVenda(Scanner leitor, Cliente cadastro) {
     System.out.print("Digite o ID do cliente que está comprando: ");
     int idCliente = leitor.nextInt();
-    leitor.nextLine(); // limpar buffer
+    leitor.nextLine();
 
     Cliente clienteSelecionado = cadastro.buscarPorId(idCliente);
 
@@ -121,7 +121,10 @@ public void finalizarVenda(Scanner leitor, Cliente cadastro) {
         return;
     }
 
-    this.cliente = clienteSelecionado; 
+    this.cliente = clienteSelecionado;
+
+   
+    Venda venda = new Venda(id, new Date(), clienteSelecionado);
 
     String continuar;
     do {
@@ -146,9 +149,11 @@ public void finalizarVenda(Scanner leitor, Cliente cadastro) {
             } else {
                 boolean sucesso = produtoSelecionado.reduzirEstoque(quantidade);
                 if (sucesso) {
-                    ItemVenda itemVenda = new ItemVenda(quantidade,produtoSelecionado);
-                    adicionarItemVenda(itemVenda);
-                    System.out.println("Item adicionado à venda com sucesso!");
+                    ItemVenda itemVenda = new ItemVenda(quantidade, produtoSelecionado);
+
+                    venda.adicionarItemVenda(itemVenda); 
+
+                    System.out.println("Operação realizada com sucesso!");
                 } else {
                     System.out.println("Erro ao reduzir estoque. Item não adicionado.");
                 }
@@ -161,11 +166,31 @@ public void finalizarVenda(Scanner leitor, Cliente cadastro) {
 
     } while (continuar.equalsIgnoreCase("s"));
 
-    calculaTotal();
+    venda.calculaTotal(); 
     System.out.println("Venda finalizada com sucesso!");
-    exibirResumo();
+    venda.exibirResumo();
+
+    
+    todasAsVendas.add(venda);
 }
-// isa add metodo apenas de teste public void listarItensVenda() {
+
+public String gerarRelatorioVendas() {
+    if (todasAsVendas.isEmpty()) {
+        return "Nenhuma venda foi realizada.";
+    }
+
+    StringBuilder relatorio = new StringBuilder("RELATÓRIO DE TODAS AS VENDAS:\n");
+
+    for (Venda v : todasAsVendas) {
+        relatorio.append(v.toString()).append("\n");
+    }
+
+    return relatorio.toString();
+}
+
+
+
+
     public void listarItensVenda() {
         if (itensVenda.isEmpty()) {
             System.out.println("Nenhum item adicionado à venda.");
