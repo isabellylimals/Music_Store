@@ -7,22 +7,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class ClienteDao {
-    public void cadastrar(Cliente cliente) {
-        String sql = "INSERT INTO clientes (id, nome, email, senha, telefone, administrador) VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement comandoPreparado  = null;
+
+    public static void cadastrar(Cliente cliente) {
+        String sql = "INSERT INTO clientes (id, nome, email, senha, telefone, administrador, stats) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement comandoPreparado = null;
 
         try {
-            comandoPreparado  = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
 
-            comandoPreparado .setInt(1, cliente.getId());
-            comandoPreparado .setString(2, cliente.getNome());
-            comandoPreparado .setString(3, cliente.getEmail());
-            comandoPreparado .setString(4, cliente.getSenha());
-            comandoPreparado .setString(5, cliente.getTelefone());
-            comandoPreparado .setBoolean(6, cliente.isAdministrador());
+            comandoPreparado.setInt(1, cliente.getId());
+            comandoPreparado.setString(2, cliente.getNome());
+            comandoPreparado.setString(3, cliente.getEmail());
+            comandoPreparado.setString(4, cliente.getSenha());
+            comandoPreparado.setString(5, cliente.getTelefone());
+            comandoPreparado.setBoolean(6, cliente.isAdministrador());
+            comandoPreparado.setBoolean(7, cliente.isAtivo());
 
             comandoPreparado.executeUpdate();
-            System.out.println("Cliente inserido com sucesso no banco!");
+            System.out.println("Usuario cadastrado com sucesso!");
 
         } catch (SQLException e) {
             System.out.println("Erro ao inserir cliente no banco: ");
@@ -30,7 +32,7 @@ public class ClienteDao {
         }
     }
 
-    public int obterId() {
+    public static int obterId() {
         String sql = "SELECT MAX(id) AS max_id FROM clientes";
         PreparedStatement comandoPreparado = null;
 
@@ -42,16 +44,16 @@ public class ClienteDao {
                 int ultimoId = resultado.getInt("max_id");
                 return ultimoId + 1;
             } else {
-                return 1; 
+                return 1;
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            return 1; // fallback
+            return 1;
         }
     }
 
-    public Cliente buscar(int id) {
+    public static Cliente buscar(int id) {
         String sql = "SELECT * FROM clientes WHERE id = ?";
         PreparedStatement comandoPreparado = null;
 
@@ -68,8 +70,8 @@ public class ClienteDao {
                 boolean administrador = resultado.getBoolean("administrador");
 
                 Cliente cliente = new Cliente(nome, email, senha, telefone);
-                cliente.setId(id); 
-                cliente.setAdministrador(administrador); 
+                cliente.setId(id);
+                cliente.setAdministrador(administrador);
 
                 return cliente;
             }
@@ -81,4 +83,30 @@ public class ClienteDao {
         return null;
     }
 
+    public static Cliente buscarPorEmailSenha(String email, String senha) {
+        String sql = "SELECT * FROM clientes WHERE email = ? AND senha = ?";
+        PreparedStatement comandoPreparado = null;
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setString(1, email);
+            comandoPreparado.setString(2, senha);
+            ResultSet resultado = comandoPreparado.executeQuery();
+
+            if (resultado.next()) {
+                int id = resultado.getInt("id");
+                String nome = resultado.getString("nome");
+                String telefone = resultado.getString("telefone");
+                boolean administrador = resultado.getBoolean("administrador");
+                Cliente cliente = new Cliente(nome, email, senha, telefone);
+                cliente.setId(id);
+                cliente.setAdministrador(administrador);
+
+                return cliente;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
