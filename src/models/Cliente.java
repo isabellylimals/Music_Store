@@ -1,4 +1,5 @@
 package src.models;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,19 +13,13 @@ import DAO.ClienteDao;
 
 public class Cliente extends Pessoa {
     private String telefone;
-    private static int proximoId = 1;
-    
     private static List<Cliente> listaDeClientes = new ArrayList<>();
 
     public Cliente(String nome, String email, String senha, String telefone) {
-        super(nome, email, proximoId++, senha, false);
+        super(nome, email, ClienteDao.obterId(), senha, false);
         this.telefone = telefone;
     }
 
-    public Cliente(){
-        super("", "", 0, "", false);
-        this.telefone = "";
-    }
 
     public String getTelefone() {
         return telefone;
@@ -34,23 +29,18 @@ public class Cliente extends Pessoa {
         this.telefone = telefone;
     }
 
-    public void cadastrarCliente(String nome, String email, String senha, String telefone) {
-        ClienteDao dao = new ClienteDao();
-        int proximoId = dao.obterId();
-
+    public  void cadastrarCliente(String nome, String email, String senha, String telefone) {
         Cliente novoCliente = new Cliente(nome, email, senha, telefone);
-        novoCliente.setId(proximoId);
 
         listaDeClientes.add(novoCliente);
 
-        dao.cadastrar(novoCliente);
+        ClienteDao.cadastrar(novoCliente);
 
         System.out.println("Cliente cadastrado com sucesso! ID: " + novoCliente.getId());
     }
 
     public Cliente buscarClientePorId(int id) {
-        ClienteDao dao = new ClienteDao();
-        return dao.buscar(id);
+        return ClienteDao.buscar(id);
     }
 
     public Cliente buscarPorId(int id) {
