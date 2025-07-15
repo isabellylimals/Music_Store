@@ -1,15 +1,12 @@
 package src.models;
-/*Classe para representar Pessoa
-*Pessoa contem nome, email, id, senha e administrador
-*/
 
 public class Pessoa {
   private String nome;
   private String email;
   private int id;
   private String senha;
-  private boolean administrador; //true: administrador , false: cliente
-  private boolean ativo;
+  private boolean administrador; 
+  private boolean status;
 
   public Pessoa(String nome, String email, int id, String senha, boolean administrador) {
     this.nome = nome;
@@ -17,7 +14,7 @@ public class Pessoa {
     this.id = id;
     this.senha = senha;
     this.administrador = administrador;
-    this.ativo=true;
+    this.status=true;
   }
 
   public String getNome() {
@@ -60,7 +57,7 @@ public class Pessoa {
   }
 
   public String getAdministrador() {
-    return administrador ? "Sim" : "Nao";
+    return administrador ? "Administrador" : "Cliente";
   }
 
   public boolean isAdministrador() {
@@ -72,20 +69,23 @@ public class Pessoa {
   }
 
   public boolean isAtivo(){
-    return ativo;
+    return status;
+  }
+  public void setStatus(boolean status) {
+      this.status = status;
   }
 
   public void ativaConta(){
-    this.ativo=true;
+    this.status=true;
     System.out.println("Conta ativa com sucesso!");
   }
 
   public String getStatus() {
-      return ativo ? "Ativo" : "Inativo";
+      return status ? "Ativo" : "Inativo";
   }
 
   public boolean login(String email, String senha) {
-      if (!this.ativo) {
+      if (!this.status) {
           System.out.println("Login falhou: conta desativada");
           return false;
       }
@@ -103,7 +103,7 @@ public class Pessoa {
     resultado += "ID: " + getId() + "\n";
     resultado += "Nome completo: " + getNome() + "\n";
     resultado += "Endereço de e-mail: " + getEmail() + "\n";
-    resultado += "Perfil de acesso: " + (isAdministrador() ? "Administrador" : "Cliente");
+    resultado += "Perfil de acesso: " + getAdministrador();
     resultado += "Status da conta: " + getStatus();
     return resultado;
   }
