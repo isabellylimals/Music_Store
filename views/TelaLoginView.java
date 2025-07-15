@@ -1,9 +1,12 @@
+
+// telaloginviewn
 package views;
 
 import java.util.Scanner;
 import src.models.Cliente;
 import src.utils.Tratativas;
 import DAO.ClienteDao;
+import src.models.Produto;
 
 public class TelaLoginView {
     public static void executarMenuLogin(Scanner scanner) {
@@ -28,12 +31,12 @@ public class TelaLoginView {
                     if (usuarioEncontrado != null) {
                         if (usuarioEncontrado.login(email, senha)) {
                             System.out.println("Login autorizado!");
+                            Produto.carregarProdutosDoBanco();
 
                             if (usuarioEncontrado.isAdministrador()) {
                                 // aqui entra o menu de administrador
                             } else {
                                 ClienteView.executarMenuCliente(scanner, usuarioEncontrado);
-                                // aqui entra o menu de cliente
                             }
                         } else {
                             System.out.println("Login falhou: conta desativada.");
@@ -49,8 +52,6 @@ public class TelaLoginView {
 
                     System.out.print("Digite o nome: ");
                     String novoNome = scanner.nextLine();
-
-                    System.out.print("Digite o email: ");
                     String novoEmail;
 
                     while (true) {

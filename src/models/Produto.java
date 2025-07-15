@@ -1,11 +1,10 @@
 package src.models;
 
-import DAO.ProdutoDao;
 import java.util.ArrayList;
 import java.util.List;
+import DAO.ProdutoDao;
 
 public class Produto {
-    //private static int proximoIdProd = 1;
 
     private int id;
     private String nome;
@@ -29,7 +28,7 @@ public class Produto {
         this.disponivel = true;
     }
 
-    //Funções para os clientes
+    
 
     public void exibirInformacoes() {
         System.out.println("=== Informações do Produto ===");
@@ -44,7 +43,7 @@ public class Produto {
 
     public static void carregarProdutosDoBanco() {
         List<Produto> produtosDoBanco = ProdutoDao.listarTodos();
-        for (Produto produto : produtosDoBanco) {//caso seja chamado mais de 1 vez, evita duplicação
+        for (Produto produto : produtosDoBanco) {
             boolean jaExiste = false;
             for (Produto existente : listaDeProdutos) {
                 if (existente.getId() == produto.getId()) {
@@ -58,17 +57,16 @@ public class Produto {
         }
     }
 
-    // após cada compra o estoque vai diminuir
     public boolean reduzirEstoque(int quantidade) {
         if (quantidade <= qtdEstoque) {
             this.qtdEstoque -= quantidade;
             return true;
-        }//não pode comprar mais do oque tem no estoque
+        }
         return false;
     }
 
-    public static void exibirProdutosCliente() {//produtos excluidos são false
-    boolean encontrouDisponivel = false;//logo os clientes não podem visualizar
+    public static void exibirProdutosCliente() {
+    boolean encontrouDisponivel = false;
 
     System.out.println("=== Produtos Disponíveis para Compra ===");
     for (Produto produto : listaDeProdutos) {
@@ -96,7 +94,6 @@ public class Produto {
         }
     }
 
-    //Funções adm
 
     public void alterarProduto(String nome, String genero, String artista, int ano, double preco, int estoque, boolean disponivel) {
         this.nome = nome;
@@ -118,10 +115,10 @@ public class Produto {
         return null;
     }
 
-    public static void excluirProduto(int id) { //não vai excluir do banco de dados
+    public static void excluirProduto(int id) { 
         Produto produto = buscarPorId(id);
         if (produto != null) {
-            produto.setDisponivel(false);//vai fazer com que disponivel fique false e os clientes não possam ver
+            produto.setDisponivel(false);
 
             ProdutoDao.atualizarDisponibilidade(id, false);
 
@@ -149,6 +146,19 @@ public class Produto {
     public void reporEstoque(int quantidade) {
         this.qtdEstoque += quantidade;
     }
+
+    public static List<Produto> buscarPorNome(String nomeBusca) {
+    return ProdutoDao.buscarPorNome(nomeBusca);
+    }
+
+    public static List<Produto> buscarPorArtista(String artistaBusca) {
+    return ProdutoDao.buscarPorArtista(artistaBusca);
+    }
+
+    public static List<Produto> buscarPorGenero(String generoBusca) {
+    return ProdutoDao.buscarPorGenero(generoBusca);
+    }
+
 
      @Override
     public String toString() {
