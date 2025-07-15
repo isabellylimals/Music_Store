@@ -41,7 +41,7 @@ public class MenuUtils {
     public static void exibirMenuCliente() {
         System.out.println("=== MENU CLIENTE ===");
         System.out.println("1. Exibir Dados Cadastrais");
-        System.out.println("2. Inativar Conta do Cliente");
+        System.out.println("2. Atualizar Status da Conta");
         System.out.println("3. Alterar Dados Cadastrais");
         System.out.println("4. Consultar Produtos");
         System.out.println("5. Visualizar Histórico de Compras");
