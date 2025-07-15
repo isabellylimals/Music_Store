@@ -41,7 +41,7 @@ public class Tratativas {
         return senhas;
     }
 
-    /* */
+    
     public static void limparTela() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
@@ -65,7 +65,6 @@ public class Tratativas {
             } catch (NumberFormatException e) {
                 System.out.println("Por favor, digite um numero inteiro válido!");
             }
-            ;
         }
     }
 

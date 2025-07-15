@@ -86,7 +86,6 @@ public class Pessoa {
 
   public boolean login(String email, String senha) {
       if (!this.status) {
-          System.out.println("Login falhou: conta desativada");
           return false;
       }
       return this.email.equals(email) && this.senha.equals(senha);
