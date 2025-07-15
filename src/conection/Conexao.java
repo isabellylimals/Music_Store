@@ -10,16 +10,9 @@ public class Conexao {
     public static final String USER = "root";
     public static final String PASSWORD = "UIsuCmquBSNabpodMaOvgWwDKUISfrxb";
 
-    private static Connection conexaoBanco;
-
     public static Connection getConexao() {
         try {
-            if (conexaoBanco == null) {
-                conexaoBanco = DriverManager.getConnection(URL, USER, PASSWORD);
-                return conexaoBanco;
-            } else {
-                return conexaoBanco;
-            }
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;

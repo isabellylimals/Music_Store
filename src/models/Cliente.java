@@ -1,9 +1,8 @@
 package src.models;
 
+import DAO.ClienteDao;
 import java.util.ArrayList;
 import java.util.List;
-
-import DAO.ClienteDao;
 
 /*
 *Classe para representar um cliente
@@ -15,22 +14,30 @@ public class Cliente extends Pessoa {
     private String telefone;
     private static List<Cliente> listaDeClientes = new ArrayList<>();
 
-    public Cliente(String nome, String email, String senha, String telefone) {
+
+
+    public Cliente(String nome, String email, String senha, String telefone, boolean status) {
         super(nome, email, ClienteDao.obterId(), senha, false);
         this.telefone = telefone;
+        
     }
 
-
-    public String getTelefone() {
-        return telefone;
-    }
-
+       public void setCliente(Cliente cliente) {
+        this.setId(cliente.getId());
+        this.setNome(cliente.getNome());
+        this.setEmail(cliente.getEmail());
+        this.setSenha(cliente.getSenha());
+        this.telefone = cliente.getTelefone();
+    
+       }
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-
-    public  void cadastrarCliente(String nome, String email, String senha, String telefone) {
-        Cliente novoCliente = new Cliente(nome, email, senha, telefone);
+public String getTelefone() {
+        return telefone;
+    }
+    public  void cadastrarCliente(String nome, String email, String senha, String telefone, boolean status) {
+        Cliente novoCliente = new Cliente(nome, email, senha, telefone, status);
 
         listaDeClientes.add(novoCliente);
 
@@ -39,21 +46,12 @@ public class Cliente extends Pessoa {
         System.out.println("Cliente cadastrado com sucesso! ID: " + novoCliente.getId());
     }
 
-    public Cliente buscarClientePorId(int id) {
+    public Cliente buscarPorId(int id) {
         return ClienteDao.buscar(id);
     }
 
-    public Cliente buscarPorId(int id) {
-        for (Cliente cliente : listaDeClientes) {
-            if (cliente.getId() == id) {
-                return cliente;
-            }
-        }
-        return null;
-    }
-
     public void exibirDadosCadastrais(int id) {
-        Cliente clienteEncontrado = buscarClientePorId(id);
+        Cliente clienteEncontrado = buscarPorId(id);
 
         if (clienteEncontrado != null) {
             System.out.println("Informações do cliente:");

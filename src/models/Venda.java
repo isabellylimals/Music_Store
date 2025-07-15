@@ -1,4 +1,5 @@
 package src.models;
+import DAO.ClienteDao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,19 +12,15 @@ private double valorTotal;
 Cliente cliente;
 
 private static List<Venda> todasAsVendas = new ArrayList<>();
-
 private ArrayList <ItemVenda> itensVenda = new ArrayList<>();
-//private ArrayList<Venda> vendas= new ArrayList<>();
 
- //incluir cliente dps em todos os metodos que precisa
-public Venda(int id, Date data, Cliente cliente){
+public Venda(int id, Date data, Cliente cliente) {
     this.id= id;
     this.data=data;
     this.valorTotal= 0.0;
     this.itensVenda = new ArrayList<>();
     this.cliente= cliente;
 }
-
 public int getId() {
     return id;
 }
@@ -47,6 +44,11 @@ public void setData(Date data) {
 public void setValorTotal(double valorTotal) {
     this.valorTotal = valorTotal;
 }
+
+public List<ItemVenda> getItensVenda() {
+    return this.itensVenda;
+}
+
 
 @Override
 public String toString() {
@@ -108,13 +110,12 @@ public double calculaTotal() {
     this.valorTotal = total;
     return total;
 }
-
-public void finalizarVenda(Scanner leitor, Cliente cadastro) {
+public void finalizarVenda(Scanner leitor) {
     System.out.print("Digite o ID do cliente que está comprando: ");
     int idCliente = leitor.nextInt();
     leitor.nextLine();
 
-    Cliente clienteSelecionado = cadastro.buscarPorId(idCliente);
+    Cliente clienteSelecionado = ClienteDao.buscar(idCliente);
 
     if (clienteSelecionado == null) {
         System.out.println("Cliente não encontrado. Venda cancelada.");
@@ -123,8 +124,7 @@ public void finalizarVenda(Scanner leitor, Cliente cadastro) {
 
     this.cliente = clienteSelecionado;
 
-   
-    Venda venda = new Venda(id, new Date(), clienteSelecionado);
+    Venda venda = new Venda(0, new Date(), clienteSelecionado);
 
     String continuar;
     do {
@@ -150,10 +150,8 @@ public void finalizarVenda(Scanner leitor, Cliente cadastro) {
                 boolean sucesso = produtoSelecionado.reduzirEstoque(quantidade);
                 if (sucesso) {
                     ItemVenda itemVenda = new ItemVenda(quantidade, produtoSelecionado);
-
-                    venda.adicionarItemVenda(itemVenda); 
-
-                    System.out.println("Operação realizada com sucesso!");
+                    venda.adicionarItemVenda(itemVenda);
+                    System.out.println("Item adicionado à venda.");
                 } else {
                     System.out.println("Erro ao reduzir estoque. Item não adicionado.");
                 }
@@ -166,15 +164,19 @@ public void finalizarVenda(Scanner leitor, Cliente cadastro) {
 
     } while (continuar.equalsIgnoreCase("s"));
 
-    venda.calculaTotal(); 
-    System.out.println("Venda finalizada com sucesso!");
-    venda.exibirResumo();
+    venda.calculaTotal();
 
-    
-    todasAsVendas.add(venda);
+   
+    //VendaDao.salvar(venda);
+
+    System.out.println("Venda finalizada e salva com sucesso!");
+    venda.exibirResumo();
 }
 
-public String gerarRelatorioVendas() {
+
+public static String gerarRelatorioVendas() {
+    //List<Venda> todasAsVendas = VendaDao.listarTodas();
+
     if (todasAsVendas.isEmpty()) {
         return "Nenhuma venda foi realizada.";
     }

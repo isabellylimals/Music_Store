@@ -1,8 +1,8 @@
 package src.models;
 
+import DAO.ProdutoDao;
 import java.util.ArrayList;
 import java.util.List;
-import DAO.ProdutoDao;
 
 public class Produto {
     //private static int proximoIdProd = 1;

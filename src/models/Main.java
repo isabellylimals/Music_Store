@@ -1,7 +1,6 @@
 package src.models;
 import java.util.Date;
 import java.util.Scanner;
-
 import src.utils.Tratativas;
 
 public class Main {
@@ -52,7 +51,7 @@ public class Main {
                     String senha = leitor.nextLine();
                     System.out.print("Digite o telefone: ");
                     String telefone = leitor.nextLine();
-                    cadastro.cadastrarCliente(nome, email, senha, telefone);                    
+                    cadastro.cadastrarCliente(nome, email, senha, telefone,true);                    
                     break;
 
                 case 2:
@@ -119,10 +118,12 @@ public class Main {
                     
                     break;
                 case 8: 
-                v.finalizarVenda(leitor, cadastro);
+                v.finalizarVenda(leitor);
                     break;
                 case 9:
-                     Produto.exibirProdutosCliente();
+                v.gerarRelatorioVendas();
+
+                     //Produto.exibirProdutosCliente();
                 
                 break;
                 case 10:
