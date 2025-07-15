@@ -4,12 +4,6 @@ import DAO.ClienteDao;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-*Classe para representar um cliente
-*Cliente é um tipo de pessoa
-*Cliente contem um telefone e os atributos de Pessoa
-*/
-
 public class Cliente extends Pessoa {
     private String telefone;
     private static List<Cliente> listaDeClientes = new ArrayList<>();
@@ -89,7 +83,6 @@ public class Cliente extends Pessoa {
         }
     }
 
-    // ajustar.
     public void removerCliente(int id) {
         Cliente clienteEncontrado = ClienteDao.buscar(id);
 
@@ -123,7 +116,6 @@ public class Cliente extends Pessoa {
         }
 
         System.out.println("Total: " + listaDeClientes.size() + " clientes");
-
     }
 
     @Override
