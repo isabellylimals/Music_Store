@@ -123,15 +123,100 @@ public class ProdutoDao {
 
 public static void atualizarDisponibilidade(int id, boolean disponivel) {
     String sql = "UPDATE produtos SET disponivel = ? WHERE id = ?";
-    try (PreparedStatement stmt = Conexao.getConexao().prepareStatement(sql)) {
-        stmt.setBoolean(1, disponivel);
-        stmt.setInt(2, id);
-        stmt.executeUpdate();
+    PreparedStatement comandoPreparado = null;
+
+    try {
+        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+        comandoPreparado.setBoolean(1, disponivel);
+        comandoPreparado.setInt(2, id);
+        comandoPreparado.executeUpdate();
     } catch (SQLException e) {
         System.out.println("Erro ao atualizar disponibilidade do produto.");
         e.printStackTrace();
     }
 }
 
+public static List<Produto> buscarPorNome(String nomeBusca) {
+    List<Produto> resultados = new ArrayList<>();
+    String sql = "SELECT * FROM produtos WHERE LOWER(nome) = LOWER(?)";
+    PreparedStatement comandoPreparado = null;
 
+    try {
+        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+        comandoPreparado.setString(1, nomeBusca);
+        ResultSet resultado = comandoPreparado.executeQuery();
+
+        while (resultado.next()) {
+            Produto p = criarProdutoDoResultSet(resultado);
+            resultados.add(p);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return resultados;
 }
+
+public static List<Produto> buscarPorArtista(String artistaBusca) {
+    List<Produto> resultados = new ArrayList<>();
+    String sql = "SELECT * FROM produtos WHERE LOWER(artista) = LOWER(?)";
+    PreparedStatement comandoPreparado = null;
+
+    try {
+        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+        comandoPreparado.setString(1, artistaBusca);
+        ResultSet resultado = comandoPreparado.executeQuery();
+
+        while (resultado.next()) {
+            Produto p = criarProdutoDoResultSet(resultado);
+            resultados.add(p);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return resultados;
+}
+
+public static List<Produto> buscarPorGenero(String generoBusca) {
+    List<Produto> resultados = new ArrayList<>();
+    String sql = "SELECT * FROM produtos WHERE LOWER(genero) = LOWER(?)";
+    PreparedStatement comandoPreparado = null;
+
+    try {
+        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+        comandoPreparado.setString(1, generoBusca);
+        ResultSet resultado = comandoPreparado.executeQuery();
+
+        while (resultado.next()) {
+            Produto p = criarProdutoDoResultSet(resultado);
+            resultados.add(p);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return resultados;
+}
+
+
+// Utilitário para evitar duplicação de código
+private static Produto criarProdutoDoResultSet(ResultSet resultado) throws SQLException {
+    int id = resultado.getInt("id");
+    String nome = resultado.getString("nome");
+    String genero = resultado.getString("genero");
+    String artista = resultado.getString("artista");
+    int ano = resultado.getInt("anoLancamento");
+    double preco = resultado.getDouble("preco");
+    int estoque = resultado.getInt("qtdEstoque");
+    boolean disponivel = resultado.getBoolean("disponivel");
+
+    Produto p = new Produto(nome, genero, artista, ano, preco, estoque);
+    p.setId(id);
+    p.setDisponivel(disponivel);
+
+    return p;
+    }
+}
+
+
