@@ -51,7 +51,7 @@ public class Main {
                     String senha = leitor.nextLine();
                     System.out.print("Digite o telefone: ");
                     String telefone = leitor.nextLine();
-                    cadastro.cadastrarCliente(nome, email, senha, telefone,true);                    
+                    cadastro.cadastrarCliente(nome, email, senha, telefone);                    
                     break;
 
                 case 2:

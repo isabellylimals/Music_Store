@@ -1,8 +1,9 @@
 package src.models;
 
-import DAO.ClienteDao;
 import java.util.ArrayList;
 import java.util.List;
+
+import DAO.ClienteDao;
 
 /*
 *Classe para representar um cliente
@@ -14,30 +15,21 @@ public class Cliente extends Pessoa {
     private String telefone;
     private static List<Cliente> listaDeClientes = new ArrayList<>();
 
-
-
-    public Cliente(String nome, String email, String senha, String telefone, boolean status) {
+    public Cliente(String nome, String email, String senha, String telefone) {
         super(nome, email, ClienteDao.obterId(), senha, false);
         this.telefone = telefone;
-        
     }
 
-       public void setCliente(Cliente cliente) {
-        this.setId(cliente.getId());
-        this.setNome(cliente.getNome());
-        this.setEmail(cliente.getEmail());
-        this.setSenha(cliente.getSenha());
-        this.telefone = cliente.getTelefone();
-    
-       }
+    public String getTelefone() {
+        return telefone;
+    }
+
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-public String getTelefone() {
-        return telefone;
-    }
-    public  void cadastrarCliente(String nome, String email, String senha, String telefone, boolean status) {
-        Cliente novoCliente = new Cliente(nome, email, senha, telefone, status);
+
+    public void cadastrarCliente(String nome, String email, String senha, String telefone) {
+        Cliente novoCliente = new Cliente(nome, email, senha, telefone);
 
         listaDeClientes.add(novoCliente);
 
@@ -46,12 +38,21 @@ public String getTelefone() {
         System.out.println("Cliente cadastrado com sucesso! ID: " + novoCliente.getId());
     }
 
-    public Cliente buscarPorId(int id) {
+    public Cliente buscarClientePorId(int id) {
         return ClienteDao.buscar(id);
     }
 
+    public Cliente buscarPorId(int id) {
+        for (Cliente cliente : listaDeClientes) {
+            if (cliente.getId() == id) {
+                return cliente;
+            }
+        }
+        return null;
+    }
+
     public void exibirDadosCadastrais(int id) {
-        Cliente clienteEncontrado = buscarPorId(id);
+        Cliente clienteEncontrado = buscarClientePorId(id);
 
         if (clienteEncontrado != null) {
             System.out.println("Informações do cliente:");
@@ -65,40 +66,61 @@ public String getTelefone() {
         }
     }
 
-    public void consultarTodosClientes() {
-        if (listaDeClientes.isEmpty()) {
-            System.out.println("Nenhum cliente cadastrado.");
-            return;
-        }
-        for (Cliente cliente : listaDeClientes) {
-            System.out.print(
-                    "ID: " + cliente.getId() + " | Nome: " + cliente.getNome() + " | Email: " + cliente.getEmail()
-                            + "\n");
-        }
-        System.out.println("Total: " + listaDeClientes.size() + " clientes");
-    }
 
     public void alterarCadastro(int id, String novoNome, String novoEmail, String novaSenha, String novoTelefone) {
-        Cliente clienteEncontrado = buscarPorId(id);
+        Cliente clienteEncontrado = ClienteDao.buscar(id);
         if (clienteEncontrado != null) {
             clienteEncontrado.setNome(novoNome);
             clienteEncontrado.setEmail(novoEmail);
             clienteEncontrado.setSenha(novaSenha);
             clienteEncontrado.setTelefone(novoTelefone);
-            System.out.println("Cadastro alterado com sucesso!");
+
+            boolean sucesso = ClienteDao.atualizarCliente(clienteEncontrado);
+            if (sucesso) {
+                System.out.println("Cadastro alterado com sucesso!");
+            } else {
+                System.out.println("Erro ao atualizar cadastro no banco.");
+            }
         } else {
             System.out.println("Cliente não encontrado!");
         }
     }
 
+    // ajustar.
     public void removerCliente(int id) {
-        Cliente clienteEncontrado = buscarPorId(id);
+        Cliente clienteEncontrado = ClienteDao.buscar(id);
+
         if (clienteEncontrado != null) {
-            listaDeClientes.remove(clienteEncontrado);
-            System.out.println("Cliente removido com sucesso!");
+            clienteEncontrado.setStatus(false);
+
+            ClienteDao.atualizarStatus(clienteEncontrado.getId(), false);
+
+            System.out.println("Cliente removido com sucesso.");
         } else {
-            System.out.println("Cliente não encontrado!");
+            System.out.println("Cliente não encontrado.");
         }
+    }
+
+    public void consultarTodosClientes() {
+        listaDeClientes = ClienteDao.buscarTodos();
+
+        if (listaDeClientes.isEmpty()) {
+            System.out.println("Nenhum cliente cadastrado.");
+            return;
+        }
+
+        System.out.println("Lista de Clientes:");
+        System.out.println("---------------------------------------------------------------");
+
+        for (Cliente cliente : listaDeClientes) {
+            System.out.printf("ID: %d | Nome: %s | Email: %s%n", cliente.getId(), cliente.getNome(), cliente.getEmail());
+            System.out.printf("Telefone: %s | Status: %s%n",
+                    cliente.getTelefone(), cliente.getStatus());
+            System.out.println("---------------------------------------------------------------");
+        }
+
+        System.out.println("Total: " + listaDeClientes.size() + " clientes");
+
     }
 
     @Override
