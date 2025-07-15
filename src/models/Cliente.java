@@ -1,9 +1,8 @@
 package src.models;
 
+import DAO.ClienteDao;
 import java.util.ArrayList;
 import java.util.List;
-
-import DAO.ClienteDao;
 
 /*
 *Classe para representar um cliente
@@ -18,6 +17,10 @@ public class Cliente extends Pessoa {
     public Cliente(String nome, String email, String senha, String telefone) {
         super(nome, email, ClienteDao.obterId(), senha, false);
         this.telefone = telefone;
+    }
+    public Cliente(){
+        super("", "", ClienteDao.obterId(), "", false);
+        this.telefone = "";
     }
 
     public String getTelefone() {

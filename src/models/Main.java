@@ -16,12 +16,12 @@ public class Main {
         do {
             System.out.println("===== MUSIC STORE =====");
             System.out.println("1 - Cadastrar Cliente");
-            System.out.println("2 - Exibir Dados Cadastrais");
-            System.out.println("3 - Excluir Cliente");
-            System.out.println("4 - Listar Clientes");
-            System.out.println("5 - Alterar Dados Cadastrais");
+            System.out.println("2 - Buscar cliente por id");
+            System.out.println("3 -  Mudar status do cliente");
+            System.out.println("4 - Listar todos os Clientes");
+            System.out.println("5 - Alterar Dados Cadastrais do cliente");
             System.out.println("6 - Cadastrar Produto");
-            System.out.println("7 - Remover item");
+            System.out.println("7 - Mudar status do produto");
             System.out.println("8 - Finalizar venda");
             System.out.println("9 - Listar produtos, teste");
             System.out.println("0 - Sair");

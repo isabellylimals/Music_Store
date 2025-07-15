@@ -1,8 +1,13 @@
+
 package DAO;
 
 import src.models.Cliente;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import src.conection.Conexao;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -108,5 +113,77 @@ public class ClienteDao {
         }
 
         return null;
+    }
+
+    public static List<Cliente> buscarTodos() {
+        List<Cliente> clientes = new ArrayList<>();
+        String sql = "SELECT * FROM clientes";
+        PreparedStatement comandoPreparado = null;
+
+        try {
+
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            ResultSet resultado = comandoPreparado.executeQuery();
+
+            while (resultado.next()) {
+                int id = resultado.getInt("id");
+                String nome = resultado.getString("nome");
+                String email = resultado.getString("email");
+                String senha = resultado.getString("senha");
+                String telefone = resultado.getString("telefone");
+                boolean administrador = resultado.getBoolean("administrador");
+                boolean stats = resultado.getBoolean("stats");
+
+                Cliente cliente = new Cliente(nome, email, senha, telefone);
+                cliente.setStatus(stats);
+                cliente.setId(id);
+                cliente.setAdministrador(administrador);
+
+                clientes.add(cliente);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return clientes;
+    }
+
+    public static void atualizarStatus(int id, boolean status) {
+        String sql = "UPDATE clientes SET stats = ? WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
+
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setBoolean(1, status);
+            comandoPreparado.setInt(2, id);
+            comandoPreparado.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar status do cliente.");
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean atualizarCliente(Cliente cliente) {
+        String sql = "UPDATE clientes SET nome = ?, email = ?, senha = ?, telefone = ? WHERE id = ?";
+
+        PreparedStatement comandoPreparado = null;
+
+        try {
+
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setString(1, cliente.getNome());
+            comandoPreparado.setString(2, cliente.getEmail());
+            comandoPreparado.setString(3, cliente.getSenha());
+            comandoPreparado.setString(4, cliente.getTelefone());
+            comandoPreparado.setInt(5, cliente.getId());
+
+            int linhasAfetadas = comandoPreparado.executeUpdate();
+            return linhasAfetadas > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
