@@ -68,17 +68,46 @@ public class VendaDao {
 
    
     public static void atualizarEstoque(int id, int novoEstoque) {
-    String sql = "UPDATE produtos SET qtdEstoque = ? WHERE id = ?";
-    PreparedStatement comandoPreparado = null;
+        String sql = "UPDATE produtos SET qtdEstoque = ? WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
 
-    try {
-        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
-        comandoPreparado.setInt(1, novoEstoque);
-        comandoPreparado.setInt(2, id);
-        comandoPreparado.executeUpdate();
-    } catch (SQLException e) {
-        System.out.println("Erro ao atualizar disponibilidade do produto.");
-        e.printStackTrace();
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, novoEstoque);
+            comandoPreparado.setInt(2, id);
+            comandoPreparado.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar disponibilidade do produto.");
+            e.printStackTrace();
+        }
     }
-}
+
+    public static void reporEstoque(int id, int quantidade) {
+        String sql = "UPDATE produtos SET qtdEstoque = qtdEstoque + ? WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
+            try {
+            comandoPreparado= Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, quantidade);
+            comandoPreparado.setInt(2, id);
+            comandoPreparado.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao repor estoque.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void reduzirEstoque(int id, int quantidade) {
+        String sql = "UPDATE produtos SET qtdEstoque = qtdEstoque - ? WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
+        try  {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, quantidade);
+            comandoPreparado.setInt(2, id);
+            comandoPreparado.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Erro ao reduzir estoque.");
+            e.printStackTrace();
+        }
+    }
+
 }
