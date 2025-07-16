@@ -65,12 +65,10 @@ public class Produto {
         return false;
     }
 
-
-public void reporEstoque(int id, int quantidade) {
-    this.qtdEstoque += quantidade;
-    VendaDao.reporEstoque(id, quantidade);
-}
-
+    public void reporEstoque(int id, int quantidade) {
+        this.qtdEstoque += quantidade;
+        VendaDao.reporEstoque(id, quantidade);
+    }
 
     public static void exibirProdutosCliente() {
         boolean encontrouDisponivel = false;
@@ -126,7 +124,7 @@ public void reporEstoque(int id, int quantidade) {
         return null;
     }
 
- public static void excluirProduto(int id) { 
+    public static void excluirProduto(int id) {
         Produto produto = buscarPorId(id);
         if (produto != null) {
             produto.setDisponivel(false);
@@ -134,7 +132,7 @@ public void reporEstoque(int id, int quantidade) {
             ProdutoDao.atualizarDisponibilidade(id, false);
 
             listaDeProdutos.remove(id);
-            
+
         } else {
             System.out.println("Produto não encontrado.");
         }
@@ -153,11 +151,6 @@ public void reporEstoque(int id, int quantidade) {
 
     public Produto buscarProdutoPorId(int id) {
         return ProdutoDao.buscar(id);
-    }
-
-    public void reporEstoque(int id, int quantidade) {
-        this.qtdEstoque += quantidade;
-        VendaDao.atualizarEstoque(id, quantidade);
     }
 
     public static List<Produto> buscarPorNome(String nomeBusca) {

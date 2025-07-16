@@ -5,8 +5,6 @@ import src.models.Produto;
 import src.models.Venda;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import src.conection.Conexao;
 import java.sql.PreparedStatement;
