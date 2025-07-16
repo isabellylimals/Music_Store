@@ -1,5 +1,3 @@
-
-// telaloginviewn
 package views;
 
 import java.util.Scanner;
@@ -15,16 +13,21 @@ public class TelaLoginView {
             MenuUtils.exibirMenulogin();
 
             System.out.print("Informe a opção: ");
-            opcao = scanner.nextInt();
-            scanner.nextLine();
+            opcao = Tratativas.lerInteiro();
 
             switch (opcao) {
                 case 1:
-                    System.out.print("Digite o email: ");
-                    String email = scanner.nextLine();
+                    String email;
+                    do {
+                        System.out.print("Digite o novo email: ");
+                        email = scanner.nextLine();
+                        if (!Tratativas.validarEmail(email)) {
+                            System.out.println("Email inválido! Tente novamente.");
+                        }
+                    } while (!Tratativas.validarEmail(email));
 
                     System.out.print("Digite a senha: ");
-                    String senha = scanner.nextLine();
+                    String senha = Tratativas.lerSenha();
 
                     Cliente usuarioEncontrado = ClienteDao.buscarPorEmailSenha(email, senha);
 
@@ -34,7 +37,7 @@ public class TelaLoginView {
                             Produto.carregarProdutosDoBanco();
 
                             if (usuarioEncontrado.isAdministrador()) {
-                                // aqui entra o menu de administrador
+                                AdministratorView.executarMenuAdministrator(scanner, usuarioEncontrado);
                             } else {
                                 ClienteView.executarMenuCliente(scanner, usuarioEncontrado);
                             }
@@ -51,7 +54,7 @@ public class TelaLoginView {
                     System.out.println("Criando nova conta de usuário:");
 
                     System.out.print("Digite o nome: ");
-                    String novoNome = scanner.nextLine();
+                    String novoNome = Tratativas.lerSomenteLetrasEEspacos("Informe o nome novamente");
                     String novoEmail;
 
                     while (true) {
@@ -65,15 +68,12 @@ public class TelaLoginView {
                     }
 
                     System.out.print("Digite a senha: ");
-                    String novaSenha = scanner.nextLine();
+                    String novaSenha = Tratativas.lerSenha();
 
                     System.out.print("Digite o telefone: ");
-                    String novoTelefone = scanner.nextLine();
+                    String novoTelefone = Tratativas.lerTelefone();
 
-                    System.out.print("Você é administrador? (sim/nao): ");
-                    String perfilUsuario = scanner.nextLine();
-
-                    boolean isAdministrador = perfilUsuario.equalsIgnoreCase("sim");
+                    boolean isAdministrador = Tratativas.verificaAdministrador();
 
                     Cliente usuario = new Cliente(novoNome, novoEmail, novaSenha, novoTelefone);
                     usuario.setAdministrador(isAdministrador);
@@ -85,6 +85,7 @@ public class TelaLoginView {
 
                 case 0:
                     System.out.println("Saindo do Sistema ...");
+                    Tratativas.limparTela();
                     break;
 
                 default:

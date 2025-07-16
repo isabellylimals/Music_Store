@@ -12,10 +12,6 @@ public class Cliente extends Pessoa {
         super(nome, email, ClienteDao.obterId(), senha, false);
         this.telefone = telefone;
     }
-    public Cliente(){
-        super("", "", ClienteDao.obterId(), "", false);
-        this.telefone = "";
-    }
 
     public String getTelefone() {
         return telefone;
@@ -28,8 +24,6 @@ public class Cliente extends Pessoa {
     public void cadastrarCliente(String nome, String email, String senha, String telefone) {
         Cliente novoCliente = new Cliente(nome, email, senha, telefone);
 
-        listaDeClientes.add(novoCliente);
-
         ClienteDao.cadastrar(novoCliente);
 
         System.out.println("Cliente cadastrado com sucesso! ID: " + novoCliente.getId());
@@ -39,14 +33,6 @@ public class Cliente extends Pessoa {
         return ClienteDao.buscar(id);
     }
 
-    public Cliente buscarPorId(int id) {
-        for (Cliente cliente : listaDeClientes) {
-            if (cliente.getId() == id) {
-                return cliente;
-            }
-        }
-        return null;
-    }
 
     public void exibirDadosCadastrais(int id) {
         Cliente clienteEncontrado = buscarClientePorId(id);

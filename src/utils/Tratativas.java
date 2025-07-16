@@ -13,7 +13,6 @@ public class Tratativas {
         leitor.close();
     }
 
-    
     public static String lerLogin() {
         String login;
 
@@ -33,15 +32,16 @@ public class Tratativas {
 
             if (senhas.length() < 8) {
                 System.out.println("A senha deve ter pelo menos 8 caracteres. ");
+                System.out.print("Digite a senha: ");
             } else if (senhas.contains(" ")) {
                 System.out.println("A senha não pode conter espaços em branco.");
+                System.out.print("Digite a senha: ");
             }
 
         } while (senhas.length() < 8 || senhas.contains(" "));
         return senhas;
     }
 
-    
     public static void limparTela() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
@@ -54,7 +54,7 @@ public class Tratativas {
                 System.out.flush();
             }
         } catch (Exception e) {
-            System.out.println("\n".repeat(50)); 
+            System.out.println("\n".repeat(50));
         }
     }
 
@@ -64,6 +64,7 @@ public class Tratativas {
                 return Integer.parseInt(leitor.nextLine().trim());
             } catch (NumberFormatException e) {
                 System.out.println("Por favor, digite um numero inteiro válido!");
+                System.out.print("Informe a opção novamente: ");
             }
         }
     }
@@ -71,7 +72,7 @@ public class Tratativas {
     public static String lerSomenteLetrasEEspacos(String texto) {
 
         while (true) {
-            
+
             String entrada = leitor.nextLine().trim();
 
             if (entrada.matches("[A-Za-zÀ-ÿ ]+") && entrada.replaceAll("[^A-Za-zÀ-ÿ]", "").length() >= 2) {
@@ -79,7 +80,7 @@ public class Tratativas {
             }
 
             System.out.println("Por favor, digite apenas letras e espaços (mínimo duas letras)!");
-            System.out.print(texto + ":");
+            System.out.print(texto + ": ");
         }
     }
 
@@ -116,4 +117,21 @@ public class Tratativas {
     public static boolean validarEmail(String email) {
         return email.matches("^[\\w](\\.?[\\w-])*@[\\w-]+\\.[a-zA-Z]{2,}$");
     }
+
+    public static boolean verificaAdministrador() {
+        String perfilUsuario;
+
+        while (true) {
+            System.out.print("Você é administrador? (sim/nao): ");
+            perfilUsuario = leitor.nextLine().trim();
+
+            if ((perfilUsuario.equalsIgnoreCase("sim") || perfilUsuario.equalsIgnoreCase("nao"))
+                    && !perfilUsuario.contains(" ")) {
+                return perfilUsuario.equalsIgnoreCase("sim");
+            } else {
+                System.out.println("Entrada inválida. Digite apenas 'sim' ou 'nao', sem espaços.");
+            }
+        }
+    }
+
 }
