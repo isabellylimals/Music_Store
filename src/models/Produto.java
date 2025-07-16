@@ -3,6 +3,7 @@ package src.models;
 import java.util.ArrayList;
 import java.util.List;
 import DAO.ProdutoDao;
+import DAO.VendaDao;
 
 public class Produto {
 
@@ -17,7 +18,7 @@ public class Produto {
 
     private static List<Produto> listaDeProdutos = new ArrayList<>();
 
-       public Produto(String nome, String genero, String artista, int anoLancamento, double preco, int qtdEstoque) {
+    public Produto(String nome, String genero, String artista, int anoLancamento, double preco, int qtdEstoque) {
         this.id = ProdutoDao.obterId();
         this.nome = nome;
         this.genero = genero;
@@ -27,8 +28,6 @@ public class Produto {
         this.qtdEstoque = qtdEstoque;
         this.disponivel = true;
     }
-
-    
 
     public void exibirInformacoes() {
         System.out.println("=== Informações do Produto ===");
@@ -57,32 +56,37 @@ public class Produto {
         }
     }
 
-    public boolean reduzirEstoque(int quantidade) {
+    public boolean reduzirEstoque(int id, int quantidade) {
         if (quantidade <= qtdEstoque) {
             this.qtdEstoque -= quantidade;
+            VendaDao.atualizarEstoque(id, this.qtdEstoque);
+
+            if (this.qtdEstoque == 0) {
+                Produto.excluirProduto(id);
+
+            }
             return true;
         }
         return false;
     }
 
     public static void exibirProdutosCliente() {
-    boolean encontrouDisponivel = false;
+        boolean encontrouDisponivel = false;
 
-    System.out.println("=== Produtos Disponíveis para Compra ===");
-    for (Produto produto : listaDeProdutos) {
-        if (produto.isDisponivel()) {
-            System.out.println(produto);
-            encontrouDisponivel = true;
+        System.out.println("=== Produtos Disponíveis para Compra ===");
+        for (Produto produto : listaDeProdutos) {
+            if (produto.isDisponivel()) {
+                System.out.println(produto);
+                encontrouDisponivel = true;
+            }
+        }
+
+        if (!encontrouDisponivel) {
+            System.out.println("Nenhum produto disponível para clientes no momento.");
         }
     }
 
-    if (!encontrouDisponivel) {
-        System.out.println("Nenhum produto disponível para clientes no momento.");
-    }
-}
-
-
-     public static void exibirTodosProdutos() {
+    public static void exibirTodosProdutos() {
         if (listaDeProdutos.isEmpty()) {
             System.out.println("Nenhum produto cadastrado.");
             return;
@@ -94,8 +98,8 @@ public class Produto {
         }
     }
 
-
-    public void alterarProduto(String nome, String genero, String artista, int ano, double preco, int estoque, boolean disponivel) {
+    public void alterarProduto(String nome, String genero, String artista, int ano, double preco, int estoque,
+            boolean disponivel) {
         this.nome = nome;
         this.genero = genero;
         this.artista = artista;
@@ -120,22 +124,23 @@ public class Produto {
         return null;
     }
 
-    public static void excluirProduto(int id) { 
+ public static void excluirProduto(int id) { 
         Produto produto = buscarPorId(id);
         if (produto != null) {
             produto.setDisponivel(false);
 
             ProdutoDao.atualizarDisponibilidade(id, false);
 
-            System.out.println("Produto removido");
+            listaDeProdutos.remove(id);
+            
         } else {
             System.out.println("Produto não encontrado.");
         }
     }
 
-    public static void cadastrarProduto(Produto produto){
+    public static void cadastrarProduto(Produto produto) {
         int proximoId = ProdutoDao.obterId();
-        
+
         produto.setId(proximoId);
 
         listaDeProdutos.add(produto);
@@ -147,25 +152,25 @@ public class Produto {
     public Produto buscarProdutoPorId(int id) {
         return ProdutoDao.buscar(id);
     }
-    
-    public void reporEstoque(int quantidade) {
+
+    public void reporEstoque(int id, int quantidade) {
         this.qtdEstoque += quantidade;
+        VendaDao.atualizarEstoque(id, quantidade);
     }
 
     public static List<Produto> buscarPorNome(String nomeBusca) {
-    return ProdutoDao.buscarPorNome(nomeBusca);
+        return ProdutoDao.buscarPorNome(nomeBusca);
     }
 
     public static List<Produto> buscarPorArtista(String artistaBusca) {
-    return ProdutoDao.buscarPorArtista(artistaBusca);
+        return ProdutoDao.buscarPorArtista(artistaBusca);
     }
 
     public static List<Produto> buscarPorGenero(String generoBusca) {
-    return ProdutoDao.buscarPorGenero(generoBusca);
+        return ProdutoDao.buscarPorGenero(generoBusca);
     }
 
-
-     @Override
+    @Override
     public String toString() {
         return String.format("ID: %d | Nome: %s | Artista: %s | Gênero: %s | Preço: R$ %.2f | Estoque: %d",
                 id, nome, artista, genero, preco, qtdEstoque);
@@ -233,6 +238,6 @@ public class Produto {
 
     public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;
-    } 
-    
+    }
+
 }

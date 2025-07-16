@@ -73,7 +73,7 @@ public class TelaLoginView {
                     System.out.print("Digite o telefone: ");
                     String novoTelefone = Tratativas.lerTelefone();
 
-                    boolean isAdministrador = Tratativas.verificaAdministrador();
+                    boolean isAdministrador = Tratativas.verificaEscolha("O usuário é administrador (sim/nao)");
 
                     Cliente usuario = new Cliente(novoNome, novoEmail, novaSenha, novoTelefone);
                     usuario.setAdministrador(isAdministrador);

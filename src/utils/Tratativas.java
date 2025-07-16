@@ -118,11 +118,11 @@ public class Tratativas {
         return email.matches("^[\\w](\\.?[\\w-])*@[\\w-]+\\.[a-zA-Z]{2,}$");
     }
 
-    public static boolean verificaAdministrador() {
+    public static boolean verificaEscolha(String texto) {
         String perfilUsuario;
 
         while (true) {
-            System.out.print("Você é administrador? (sim/nao): ");
+            System.out.print(texto + ": ");
             perfilUsuario = leitor.nextLine().trim();
 
             if ((perfilUsuario.equalsIgnoreCase("sim") || perfilUsuario.equalsIgnoreCase("nao"))
