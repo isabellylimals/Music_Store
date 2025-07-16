@@ -57,18 +57,20 @@ public class Produto {
     }
 
     public boolean reduzirEstoque(int id, int quantidade) {
-        if (quantidade <= qtdEstoque) {
+        if (this.qtdEstoque >= quantidade) {
             this.qtdEstoque -= quantidade;
-            VendaDao.atualizarEstoque(id, this.qtdEstoque);
-
-            if (this.qtdEstoque == 0) {
-                Produto.excluirProduto(id);
-
-            }
+            VendaDao.reduzirEstoque(id, quantidade);
             return true;
         }
         return false;
     }
+
+
+public void reporEstoque(int id, int quantidade) {
+    this.qtdEstoque += quantidade;
+    VendaDao.reporEstoque(id, quantidade);
+}
+
 
     public static void exibirProdutosCliente() {
         boolean encontrouDisponivel = false;
