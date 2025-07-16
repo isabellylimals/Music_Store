@@ -1,10 +1,11 @@
 package views;
 
+import DAO.ClienteDao;
 import java.util.Scanner;
 import src.models.Cliente;
-import src.utils.Tratativas;
-import DAO.ClienteDao;
 import src.models.Produto;
+import src.models.Venda;
+import src.utils.Tratativas;
 
 public class TelaLoginView {
     public static void executarMenuLogin(Scanner scanner) {
@@ -34,6 +35,8 @@ public class TelaLoginView {
                     if (usuarioEncontrado != null) {
                         if (usuarioEncontrado.login(email, senha)) {
                             System.out.println("Login autorizado!");
+                            Venda.finalizarVenda(scanner);
+                            Produto.exibirTodosProdutos();
                             Produto.carregarProdutosDoBanco();
 
                             if (usuarioEncontrado.isAdministrador()) {

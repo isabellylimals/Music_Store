@@ -1,9 +1,9 @@
 package src.models;
 
-import java.util.ArrayList;
-import java.util.List;
 import DAO.ProdutoDao;
 import DAO.VendaDao;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Produto {
 
@@ -71,6 +71,7 @@ public class Produto {
     }
 
     public static void exibirProdutosCliente() {
+        List<Produto> listaDeProdutos = ProdutoDao.listarTodos();
         boolean encontrouDisponivel = false;
 
         System.out.println("=== Produtos Disponíveis para Compra ===");
@@ -131,7 +132,7 @@ public class Produto {
 
             ProdutoDao.atualizarDisponibilidade(id, false);
 
-            listaDeProdutos.remove(id);
+            carregarProdutosDoBanco();
 
         } else {
             System.out.println("Produto não encontrado.");
