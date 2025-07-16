@@ -136,6 +136,31 @@ public static void atualizarDisponibilidade(int id, boolean disponivel) {
     }
 }
 
+public static boolean atualizarProduto(Produto produto) {
+        String sql = "UPDATE produtos SET nome = ?, genero = ?, artista = ?, anoLancamento = ?, preco = ?, qtdEstoque = ?, disponivel = ? WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
+
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+
+            comandoPreparado.setString(1, produto.getNome());
+            comandoPreparado.setString(2, produto.getGenero());
+            comandoPreparado.setString(3, produto.getArtista());
+            comandoPreparado.setInt(4, produto.getAnoLancamento());
+            comandoPreparado.setDouble(5, produto.getPreco());
+            comandoPreparado.setInt(6, produto.getQtdEstoque());
+            comandoPreparado.setBoolean(7, produto.isDisponivel());
+            comandoPreparado.setInt(8, produto.getId());
+
+            int linhasAfetadas = comandoPreparado.executeUpdate();//retorna o numero de linhas afetadas
+            return linhasAfetadas > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 public static List<Produto> buscarPorNome(String nomeBusca) {
     List<Produto> resultados = new ArrayList<>();
     String sql = "SELECT * FROM produtos WHERE LOWER(nome) = LOWER(?)";

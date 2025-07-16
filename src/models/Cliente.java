@@ -21,7 +21,7 @@ public class Cliente extends Pessoa {
         this.telefone = telefone;
     }
 
-    public void cadastrarCliente(String nome, String email, String senha, String telefone) {
+    public static void cadastrarCliente(String nome, String email, String senha, String telefone) {
         Cliente novoCliente = new Cliente(nome, email, senha, telefone);
 
         ClienteDao.cadastrar(novoCliente);
@@ -83,7 +83,7 @@ public class Cliente extends Pessoa {
         }
     }
 
-    public void consultarTodosClientes() {
+    public static void consultarTodosClientes() {
         listaDeClientes = ClienteDao.buscarTodos();
 
         if (listaDeClientes.isEmpty()) {

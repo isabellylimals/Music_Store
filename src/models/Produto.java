@@ -103,7 +103,12 @@ public class Produto {
         this.preco = preco;
         this.qtdEstoque = estoque;
         this.disponivel = disponivel;
-        System.out.println("Produto alterado com sucesso!");
+        boolean atualizado = ProdutoDao.atualizarProduto(this);
+        if (atualizado) {
+            System.out.println("Produto alterado com sucesso e atualizado no banco de dados!");
+        } else {
+            System.out.println("Falha ao atualizar o produto no banco de dados.");
+        }
     }
 
     public static Produto buscarPorId(int id) {
