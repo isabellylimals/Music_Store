@@ -35,7 +35,9 @@ public class TelaLoginView {
                     if (usuarioEncontrado != null) {
                         if (usuarioEncontrado.login(email, senha)) {
                             System.out.println("Login autorizado!");
+                           
                             Venda.finalizarVenda(scanner);
+                            System.out.println( Venda.gerarRelatorioVendas());
                             Produto.exibirTodosProdutos();
                             Produto.carregarProdutosDoBanco();
 

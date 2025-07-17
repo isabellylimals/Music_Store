@@ -40,21 +40,23 @@ public class Produto {
         System.out.println("Quantidade em Estoque: " + qtdEstoque);
     }
 
-    public static void carregarProdutosDoBanco() {
-        List<Produto> produtosDoBanco = ProdutoDao.listarTodos();
-        for (Produto produto : produtosDoBanco) {
-            boolean jaExiste = false;
-            for (Produto existente : listaDeProdutos) {
-                if (existente.getId() == produto.getId()) {
-                    jaExiste = true;
-                    break;
-                }
-            }
-            if (!jaExiste) {
-                listaDeProdutos.add(produto);
+   public static void carregarProdutosDoBanco() {
+    List<Produto> produtosDoBanco = ProdutoDao.listarTodos();
+    for (Produto produto : produtosDoBanco) {
+        boolean jaExiste = false;
+        for (Produto existente : listaDeProdutos) {
+            if (existente.getId() == produto.getId()) {
+                jaExiste = true;
+                break;
             }
         }
+
+        if (!jaExiste) {
+            listaDeProdutos.add(produto);
+        }
     }
+}
+
 
     public boolean reduzirEstoque(int id, int quantidade) {
         if (this.qtdEstoque >= quantidade) {
@@ -150,7 +152,7 @@ public class Produto {
         System.out.println("O produto " + produto.getNome() + " foi cadastrado com sucesso");
     }
 
-    public Produto buscarProdutoPorId(int id) {
+    public static Produto buscarProdutoPorId(int id) {
         return ProdutoDao.buscar(id);
     }
 

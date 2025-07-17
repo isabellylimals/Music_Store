@@ -1,18 +1,17 @@
 package DAO;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import src.conection.Conexao;
 import src.models.ItemVenda;
 import src.models.Produto;
 import src.models.Venda;
-
-import java.sql.SQLException;
-
-import src.conection.Conexao;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 public class VendaDao {
     public static void cadastrarVendaBanco(Venda venda, int idCliente, String nomeCliente, ItemVenda item) {
-        String sql = "INSERT INTO vendas (idVenda, dat, valorTotal, idProduto, nomeProduto, precoProduto, quatidade, idCliente, nomeCliente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO vendas (idVenda, dat, valorTotal, idProduto, nomeProduto, precoProduto, quantidade, idCliente, nomeCliente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         PreparedStatement comandoPreparado = null;
         Produto produto = item.getProduto();
@@ -20,7 +19,7 @@ public class VendaDao {
             comandoPreparado = Conexao.getConexao().prepareStatement(sql);
 
             comandoPreparado.setInt(1, venda.getId());
-            comandoPreparado.setDate(2, new java.sql.Date(venda.getData().getTime()));  // ano-mes-dia
+            comandoPreparado.setDate(2, new java.sql.Date(venda.getData().getTime())); // ano-mes-dia
             comandoPreparado.setDouble(3, venda.getValorTotal());
 
             comandoPreparado.setInt(4, produto.getId());
@@ -41,7 +40,6 @@ public class VendaDao {
 
     }
 
-  
     public static int obterIdVendaBanco() {
         String sql = "SELECT MAX(idVenda) AS max_id FROM vendas";
         PreparedStatement comandoPreparado = null;
@@ -63,8 +61,6 @@ public class VendaDao {
         }
     }
 
-
-   
     public static void atualizarEstoque(int id, int novoEstoque) {
         String sql = "UPDATE produtos SET qtdEstoque = ? WHERE id = ?";
         PreparedStatement comandoPreparado = null;
@@ -83,8 +79,8 @@ public class VendaDao {
     public static void reporEstoque(int id, int quantidade) {
         String sql = "UPDATE produtos SET qtdEstoque = qtdEstoque + ? WHERE id = ?";
         PreparedStatement comandoPreparado = null;
-            try {
-            comandoPreparado= Conexao.getConexao().prepareStatement(sql);
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
             comandoPreparado.setInt(1, quantidade);
             comandoPreparado.setInt(2, id);
             comandoPreparado.executeUpdate();
@@ -95,17 +91,91 @@ public class VendaDao {
     }
 
     public static void reduzirEstoque(int id, int quantidade) {
-        String sql = "UPDATE produtos SET qtdEstoque = qtdEstoque - ? WHERE id = ?";
+    String sql = "UPDATE produtos SET qtdEstoque = qtdEstoque - ? WHERE id = ?";
+    PreparedStatement comandoPreparado = null;
+    try  {
+        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+        comandoPreparado.setInt(1, quantidade);
+        comandoPreparado.setInt(2, id);
+        comandoPreparado.executeUpdate();
+
+
+    } catch (SQLException e) {
+        System.out.println("Erro ao reduzir estoque.");
+        e.printStackTrace();
+    }
+}
+
+
+   public static List<String> gerarRelatorioVendasCliente(int idCliente) {
+    String sql = """
+        SELECT idVenda, dat, nomeProduto, precoProduto, quantidade, valorTotal, nomeCliente
+        FROM vendas
+        WHERE idCliente = ?
+        ORDER BY idVenda;
+    """;
+
+    List<String> relatorio = new ArrayList<>();
+    PreparedStatement comandoPreparado = null;
+
+    try {
+        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+        comandoPreparado.setInt(1, idCliente);
+        ResultSet resultado = comandoPreparado.executeQuery();
+
+        int vendaAtual = -1;
+        String nomeCliente = null;
+
+        while (resultado.next()) {
+            int idVenda = resultado.getInt("idVenda");
+            String data = resultado.getString("dat");
+            String nomeProduto = resultado.getString("nomeProduto");
+            double preco = resultado.getDouble("precoProduto");
+            int qtd = resultado.getInt("quantidade");
+            double valorTotal = resultado.getDouble("valorTotal");
+            nomeCliente = resultado.getString("nomeCliente");
+
+            if (idVenda != vendaAtual) {
+                relatorio.add(""); // linha em branco simples
+                relatorio.add(String.format("VENDA #%d | Data: %s | Cliente: %s", idVenda, data, nomeCliente));
+                relatorio.add("Produto                 | Preço   | Qtd | Total");
+        
+                vendaAtual = idVenda;
+            }
+
+            String linha = String.format("%-22s | R$%6.2f | %3d | R$%6.2f", nomeProduto, preco, qtd, preco * qtd);
+            relatorio.add(linha);
+        }
+
+        if (relatorio.isEmpty()) {
+            relatorio.add("Nenhuma venda encontrada para este cliente.");
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return relatorio;
+}
+
+
+
+    public static List<Integer> listarIdsClientesComVenda() {
+        List<Integer> ListaDeIds = new ArrayList<>();
+        String sql = "SELECT DISTINCT idCliente FROM vendas ORDER BY idCliente";
         PreparedStatement comandoPreparado = null;
-        try  {
+
+        try {
             comandoPreparado = Conexao.getConexao().prepareStatement(sql);
-            comandoPreparado.setInt(1, quantidade);
-            comandoPreparado.setInt(2, id);
-            comandoPreparado.executeUpdate();
+            ResultSet resultado = comandoPreparado.executeQuery();
+            while (resultado.next()) {
+                ListaDeIds.add(resultado.getInt("idCliente"));
+            }
         } catch (SQLException e) {
-            System.out.println("Erro ao reduzir estoque.");
             e.printStackTrace();
         }
+
+        return ListaDeIds;
     }
 
 }

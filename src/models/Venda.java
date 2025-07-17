@@ -14,7 +14,7 @@ public class Venda {
     private double valorTotal;
     Cliente cliente;
 
-    private static List<Venda> todasAsVendas = new ArrayList<>();
+    //private static List<Venda> todasAsVendas = new ArrayList<>();
     private ArrayList<ItemVenda> itensVenda = new ArrayList<>();
 
     public Venda(Date data, Cliente cliente) {
@@ -102,21 +102,25 @@ public class Venda {
     }
 
     
-    public static String gerarRelatorioVendas() {
-        // List<Venda> todasAsVendas = VendaDao.listarTodas();
+     public static String gerarRelatorioVendas() {
+        List<Integer> idsClientes = VendaDao.listarIdsClientesComVenda();
+        StringBuilder relatorio = new StringBuilder("======================================\nRELATÓRIO GERAL DE VENDAS:");
 
-        if (todasAsVendas.isEmpty()) {
-            return "Nenhuma venda foi realizada.";
+        if (idsClientes.isEmpty()) {
+            return "Nenhuma venda foi realizada por nenhum cliente.";
         }
 
-        StringBuilder relatorio = new StringBuilder("RELATÓRIO DE TODAS AS VENDAS:\n");
+        for (int idCliente : idsClientes) {
+            List<String> linhas = VendaDao.gerarRelatorioVendasCliente(idCliente);
+            for (String linha : linhas) {
+                relatorio.append(linha).append("\n");
+            }
 
-        for (Venda v : todasAsVendas) {
-            relatorio.append(v.toString()).append("\n");
         }
 
         return relatorio.toString();
     }
+    
 
 public static void finalizarVenda(Scanner leitor) {
     Cliente cliente = solicitarCliente(leitor);
