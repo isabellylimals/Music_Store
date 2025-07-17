@@ -25,16 +25,14 @@ public class MenuUtils {
         System.out.println("3. Listar Produtos");
         System.out.println("4. Alterar Produto");
         System.out.println("5. Inativar Produto");
+        System.out.println("6. Repor estoque do Produto");
         System.out.println("0. voltar");
     }
 
     public static void exibirMenuVenda() {
         System.out.println("=== GERENCIAR VENDAS ===");
-        System.out.println("1. Exibir resumo da venda ");
-        System.out.println("2. Adicionar item à venda");
-        System.out.println("3. Inativar item da venda");
-        System.out.println("4. Finalizar venda");
-        System.out.println("5. Gerar Relatório da venda");
+        System.out.println("1. Realizar venda");
+        System.out.println("2. Gerar Relatorio da venda");
         System.out.println("0. voltar");
     }
 

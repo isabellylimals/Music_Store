@@ -2,8 +2,10 @@ package views;
 
 import java.util.Scanner;
 
+import DAO.ProdutoDao;
 import src.models.Cliente;
 import src.models.Produto;
+import src.models.Venda;
 import src.utils.Tratativas;
 
 public class AdministratorView {
@@ -19,7 +21,7 @@ public class AdministratorView {
                     executarMenuProduto(scanner);
                     break;
                 case 2:
-                    // Menu de vendas ainda será implementado
+                    executarMenuVenda(scanner);
                     break;
                 case 3:
                 System.out.println("=== Cadastro de Cliente ===");
@@ -131,7 +133,47 @@ public class AdministratorView {
                     int idInativar = Tratativas.lerInteiro();
                     Produto.excluirProduto(idInativar);
                     break;
+                case 6:
+                    System.out.print("Informe o ID do produto que deseja repor: ");
+                    int idRepor = Tratativas.lerInteiro();
+                    Produto produtoRepor = ProdutoDao.buscar(idRepor);
+                    if (produtoRepor != null) {
+                        System.out.print("Informe a quantidade a ser adicionada ao estoque: ");
+                        int quantidadeAdicionar = Tratativas.lerInteiro();
+                        if (quantidadeAdicionar > 0) {
+                            produtoRepor.reporEstoque(idRepor, quantidadeAdicionar);
+                            Produto.carregarProdutosDoBanco();
+                            System.out.println("Estoque do produto atualizado com sucesso!");
+                        } else {
+                            System.out.println("Quantidade inválida. Digite um número maior que zero.");
+                        }
+                    } else {
+                        System.out.println("Produto não encontrado.");
+                    }  
+                    break;
+                case 0:
+                    System.out.println("Saindo do menu de Produtos");
+                    break;
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
+            }
+        } while (opcao != 0);
+    }
 
+    public static void executarMenuVenda(Scanner scanner) {
+        int opcao;
+        do {
+            MenuUtils.exibirMenuVenda();
+            System.out.print("Escolha uma opção: ");
+            opcao = Tratativas.lerInteiro();
+            switch (opcao) {
+                case 1:
+                    Venda.finalizarVenda(scanner);
+                    Produto.carregarProdutosDoBanco();
+                    break;
+                case 2:
+                System.out.println(Venda.gerarRelatorioVendas());
+                break;
                 case 0:
                     System.out.println("Saindo do menu de Produtos");
                     break;

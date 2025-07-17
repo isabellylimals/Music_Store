@@ -4,7 +4,6 @@ import DAO.ClienteDao;
 import java.util.Scanner;
 import src.models.Cliente;
 import src.models.Produto;
-import src.models.Venda;
 import src.utils.Tratativas;
 
 public class TelaLoginView {
@@ -36,9 +35,6 @@ public class TelaLoginView {
                         if (usuarioEncontrado.login(email, senha)) {
                             System.out.println("Login autorizado!");
                            
-                            Venda.finalizarVenda(scanner);
-                            System.out.println( Venda.gerarRelatorioVendas());
-                            Produto.exibirTodosProdutos();
                             Produto.carregarProdutosDoBanco();
 
                             if (usuarioEncontrado.isAdministrador()) {

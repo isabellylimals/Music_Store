@@ -42,21 +42,21 @@ public class Produto {
 
    public static void carregarProdutosDoBanco() {
     List<Produto> produtosDoBanco = ProdutoDao.listarTodos();
-    for (Produto produto : produtosDoBanco) {
-        boolean jaExiste = false;
-        for (Produto existente : listaDeProdutos) {
-            if (existente.getId() == produto.getId()) {
-                jaExiste = true;
-                break;
+        for (Produto produtoBanco : produtosDoBanco) {
+            boolean atualizado = false;
+            for (int i = 0; i < listaDeProdutos.size(); i++) {
+                Produto existente = listaDeProdutos.get(i);
+                if (existente.getId() == produtoBanco.getId()) {
+                    listaDeProdutos.set(i, produtoBanco);
+                    atualizado = true;
+                    break;
+                }
+            }
+            if (!atualizado) {
+                listaDeProdutos.add(produtoBanco);
             }
         }
-
-        if (!jaExiste) {
-            listaDeProdutos.add(produto);
-        }
     }
-}
-
 
     public boolean reduzirEstoque(int id, int quantidade) {
         if (this.qtdEstoque >= quantidade) {
