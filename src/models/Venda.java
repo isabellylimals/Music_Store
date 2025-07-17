@@ -1,7 +1,7 @@
 package src.models;
 
 import DAO.ClienteDao;
-import DAO.ProdutoDao;
+
 import DAO.VendaDao;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,7 +14,6 @@ public class Venda {
     private double valorTotal;
     Cliente cliente;
 
-    //private static List<Venda> todasAsVendas = new ArrayList<>();
     private ArrayList<ItemVenda> itensVenda = new ArrayList<>();
 
     public Venda(Date data, Cliente cliente) {
@@ -90,8 +89,6 @@ public class Venda {
         }
     }
 
-    
-
     public double calculaTotal() {
         double total = 0.0;
         for (ItemVenda item : itensVenda) {
@@ -101,10 +98,10 @@ public class Venda {
         return total;
     }
 
-    
-     public static String gerarRelatorioVendas() {
+    public static String gerarRelatorioVendas() {
         List<Integer> idsClientes = VendaDao.listarIdsClientesComVenda();
-        StringBuilder relatorio = new StringBuilder("======================================\nRELATÓRIO GERAL DE VENDAS:");
+        StringBuilder relatorio = new StringBuilder(
+                "======================================\nRELATÓRIO DE VENDAS POR CLIENTE:");
 
         if (idsClientes.isEmpty()) {
             return "Nenhuma venda foi realizada por nenhum cliente.";
@@ -120,139 +117,149 @@ public class Venda {
 
         return relatorio.toString();
     }
-    
 
-public static void finalizarVenda(Scanner leitor) {
-    Cliente cliente = solicitarCliente(leitor);
-    if (cliente == null) return;
+    public static void finalizarVenda(Scanner leitor) {
+        Cliente cliente = solicitarCliente(leitor);
+        if (cliente == null)
+            return;
 
-    Venda venda = new Venda(new Date(), cliente);
+        Venda venda = new Venda(new Date(), cliente);
 
-    String continuar= "s";
-    do {
-        Produto produto = solicitarProduto(leitor);
-        if (produto == null) continue;
+        String continuar = "s";
+        do {
+            Produto produto = solicitarProduto(leitor);
+            if (produto == null)
+                continue;
 
-        int quantidade = solicitarQuantidade(leitor, produto);
-        if (quantidade == -1) continue;
+            int quantidade = solicitarQuantidade(leitor, produto);
+            if (quantidade == -1)
+                continue;
 
-        boolean sucesso = produto.reduzirEstoque(produto.getId(), quantidade);
-        if (sucesso) {
-            venda.adicionarItemVenda(new ItemVenda(quantidade, produto));
-            System.out.println("Item adicionado à venda.");
-        } else {
-            System.out.println("Erro ao reduzir estoque.");
+            boolean sucesso = produto.reduzirEstoque(produto.getId(), quantidade);
+            if (sucesso) {
+                venda.adicionarItemVenda(new ItemVenda(quantidade, produto));
+                System.out.println("Item adicionado à venda.");
+            } else {
+                System.out.println("Erro ao reduzir estoque.");
+            }
+
+            System.out.print("Deseja adicionar outro produto? (s/n): ");
+            continuar = leitor.nextLine();
+        } while (continuar.equalsIgnoreCase("s"));
+
+        TirarItemdaCompra(leitor, venda);
+
+        if (!validarItensAtivos(venda)) {
+            System.out.println("Nenhum item ativo na venda. Venda não finalizada.");
+            return;
         }
 
-        System.out.print("Deseja adicionar outro produto? (s/n): ");
-        continuar = leitor.nextLine();
-    } while (continuar.equalsIgnoreCase("s"));
+        venda.calculaTotal();
 
-    TirarItemdaCompra(leitor, venda);
-
-    if (!validarItensAtivos(venda)) {
-        System.out.println("Nenhum item ativo na venda. Venda não finalizada.");
-        return;
+        for (ItemVenda item : venda.getItensVenda()) {
+            VendaDao.cadastrarVendaBanco(venda, cliente.getId(), cliente.getNome(), item);
+        }
+        System.out.println("Venda finalizada e salva com sucesso!");
+        venda.exibirResumo();
     }
 
-    venda.calculaTotal();
-    System.out.println("Venda finalizada e salva com sucesso!");
-    venda.exibirResumo();
-}
-
-///deixar em vendas
-private static boolean validarItensAtivos(Venda venda) {
-    return venda.getItensVenda()
+    private static boolean validarItensAtivos(Venda venda) {
+        return venda.getItensVenda()
                 .stream()
                 .anyMatch(ItemVenda::isAtivo);
-}
-//colocar em cliente
-private static Cliente solicitarCliente(Scanner leitor) {
-    System.out.print("Digite o ID do cliente que está comprando: ");
-    int idCliente = leitor.nextInt();
-    leitor.nextLine();
-
-    Cliente cliente = ClienteDao.buscar(idCliente);
-    if (cliente == null) {
-        System.out.println("Cliente não encontrado. Venda cancelada.");
     }
-    return cliente;
-}
 
-private static Produto solicitarProduto(Scanner leitor) {
-    System.out.println("Produtos disponíveis:");
-    Produto.exibirProdutosCliente();
-
-    System.out.print("Digite o ID do produto que deseja comprar: ");
-    int id = leitor.nextInt();
-    leitor.nextLine();
-
-    Produto produto = ProdutoDao.buscar(id);
-    if (produto == null || !produto.isDisponivel() || produto.getQtdEstoque() <= 0) {
-        System.out.println("Produto inválido.");
-        return null;
-    }
-    produto.exibirInformacoes();
-    return produto;
-}
-
-private static int solicitarQuantidade(Scanner leitor, Produto produto) {
-    int qtd;
-    do {
-        System.out.print("Digite a quantidade que deseja comprar: ");
-        qtd = leitor.nextInt();
+    private static Cliente solicitarCliente(Scanner leitor) {
+        System.out.print("Digite o ID do cliente que está comprando: ");
+        int idCliente = leitor.nextInt();
         leitor.nextLine();
 
-        if (qtd <= 0 || qtd > produto.getQtdEstoque()) {
-            System.out.println("Quantidade inválida! Estoque disponível: " + produto.getQtdEstoque());
-            return -1;
+        Cliente cliente = ClienteDao.buscar(idCliente);
+        if (cliente == null) {
+            System.out.println("Cliente não encontrado. Venda não pode prosseguir.");
         }
-    } while (qtd <= 0 || qtd > produto.getQtdEstoque());
-    return qtd;
-}
-
-private static void TirarItemdaCompra(Scanner leitor, Venda venda) {
-    System.out.print("Deseja remover algum item antes de finalizar a venda? (s/n): ");
-    String resposta = leitor.nextLine();
-
-    if (!resposta.equalsIgnoreCase("s")) return;
-
-    System.out.println("Itens adicionados à venda:");
-    for (ItemVenda item : venda.getItensVenda()) {
-        if (item.isAtivo()) {
-            System.out.println("- Produto ID " + item.getProduto().getId() + ": " +
-                    item.getProduto().getNome() + " x" + item.getQuantidade());
-        }
+        return cliente;
     }
 
-    System.out.print("Digite o ID do produto que deseja remover: ");
-    int idRemover = leitor.nextInt();
-    leitor.nextLine();
+    private static Produto solicitarProduto(Scanner leitor) {
+        System.out.println("Produtos disponíveis:");
+        Produto.exibirProdutosCliente();
 
-    venda.removerItem(idRemover);
-}
-public void removerItem(int idProcurar) {
-    boolean itemRemovido = false;
+        System.out.print("Digite o ID do produto que deseja comprar: ");
+        int id = leitor.nextInt();
+        leitor.nextLine();
 
-    for (int i = 0; i < itensVenda.size(); i++) {
-        ItemVenda item = itensVenda.get(i);
-        if (item.getProduto().getId() == idProcurar) {
-            Produto produto = item.getProduto();
-            int quantidade = item.getQuantidade();
+        Produto produto = Produto.buscarProdutoPorId(id);
+        if (produto == null || !produto.isDisponivel() || produto.getQtdEstoque() <= 0) {
+            System.out.println("Produto inválido.");
+            return null;
+        }
+        produto.exibirInformacoes();
+        return produto;
+    }
 
-            produto.reporEstoque(produto.getId(), quantidade);
-            itensVenda.remove(i);
+    private static int solicitarQuantidade(Scanner leitor, Produto produto) {
+        int qtd;
+        do {
+            System.out.print("Digite a quantidade que deseja comprar: ");
+            qtd = leitor.nextInt();
+            leitor.nextLine();
 
-            itemRemovido = true;
-            System.out.println("Item com ID: " + idProcurar + " removido e estoque reposto.");
-            break;
+            if (qtd <= 0 || qtd > produto.getQtdEstoque()) {
+                System.out.println("Quantidade inválida! Estoque disponível: " + produto.getQtdEstoque());
+                return -1;
+            }
+        } while (qtd <= 0 || qtd > produto.getQtdEstoque());
+        return qtd;
+    }
+
+    private static void TirarItemdaCompra(Scanner leitor, Venda venda) {
+        String resposta;
+        do {
+            System.out.print("Deseja remover algum item antes de finalizar a venda? (s/n): ");
+            resposta = leitor.nextLine();
+
+            if (!resposta.equalsIgnoreCase("s"))
+                break;
+
+            System.out.println("Itens adicionados à venda:");
+            for (ItemVenda item : venda.getItensVenda()) {
+                if (item.isAtivo()) {
+                    System.out.println("- Produto ID " + item.getProduto().getId() + ": " +
+                            item.getProduto().getNome() + " x" + item.getQuantidade());
+                }
+            }
+
+            System.out.print("Digite o ID do produto que deseja remover: ");
+            int idRemover = leitor.nextInt();
+            leitor.nextLine();
+
+            venda.removerItem(idRemover);
+
+        } while (true);
+    }
+
+    public void removerItem(int idProcurar) {
+        boolean itemRemovido = false;
+
+        for (int i = 0; i < itensVenda.size(); i++) {
+            ItemVenda item = itensVenda.get(i);
+            if (item.getProduto().getId() == idProcurar) {
+                Produto produto = item.getProduto();
+                int quantidade = item.getQuantidade();
+
+                produto.reporEstoque(produto.getId(), quantidade);
+                itensVenda.remove(i);
+
+                itemRemovido = true;
+                System.out.println("Item com ID: " + idProcurar + " removido e estoque reposto.");
+                break;
+            }
+        }
+
+        if (!itemRemovido) {
+            System.out.println("Nenhum item encontrado com esse ID.");
         }
     }
-
-    if (!itemRemovido) {
-        System.out.println("Nenhum item encontrado com esse ID.");
-    }
-}
-
 
 }

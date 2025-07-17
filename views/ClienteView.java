@@ -3,6 +3,8 @@ package views;
 
 import java.util.List;
 import java.util.Scanner;
+
+import DAO.VendaDao;
 import src.models.Cliente;
 import src.models.Produto;
 import src.utils.Tratativas;
@@ -52,7 +54,7 @@ public class ClienteView {
                     break;
 
                 case 5:
-                    System.out.println("Funcionalidade de histórico de compras ainda não implementada.");
+                VendaDao.gerarHistoricoVendas(cliente.getId());
                     break;
 
                 case 0:

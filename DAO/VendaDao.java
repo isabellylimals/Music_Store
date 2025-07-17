@@ -9,6 +9,7 @@ import src.conection.Conexao;
 import src.models.ItemVenda;
 import src.models.Produto;
 import src.models.Venda;
+import java.sql.Date;
 public class VendaDao {
     public static void cadastrarVendaBanco(Venda venda, int idCliente, String nomeCliente, ItemVenda item) {
         String sql = "INSERT INTO vendas (idVenda, dat, valorTotal, idProduto, nomeProduto, precoProduto, quantidade, idCliente, nomeCliente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -136,14 +137,14 @@ public class VendaDao {
             nomeCliente = resultado.getString("nomeCliente");
 
             if (idVenda != vendaAtual) {
-                relatorio.add(""); // linha em branco simples
+                relatorio.add(""); 
                 relatorio.add(String.format("VENDA #%d | Data: %s | Cliente: %s", idVenda, data, nomeCliente));
                 relatorio.add("Produto                 | Preço   | Qtd | Total");
         
                 vendaAtual = idVenda;
             }
 
-            String linha = String.format("%-22s | R$%6.2f | %3d | R$%6.2f", nomeProduto, preco, qtd, preco * qtd);
+            String linha = String.format("%-22s | R$%6.2f | %3d | R$%6.2f", nomeProduto, preco, qtd, valorTotal);
             relatorio.add(linha);
         }
 
@@ -176,6 +177,53 @@ public class VendaDao {
         }
 
         return ListaDeIds;
+    }
+
+
+
+
+    public static void gerarHistoricoVendas(int idCliente) {
+        String sql = "SELECT idVenda, dat, nomeProduto, quantidade, precoProduto, valorTotal, nomeCliente "
+                + "FROM vendas WHERE idCliente = ?";
+        PreparedStatement comandoPreparado = null;
+
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, idCliente);
+            ResultSet resultado = comandoPreparado.executeQuery();
+
+            boolean encontrou = false;
+            String nomeCliente = "";
+
+            while (resultado.next()) {
+                if (!encontrou) {
+                    nomeCliente = resultado.getString("nomeCliente");
+                    System.out.println("=== Histórico de Compras de " + nomeCliente + " ===");
+                }
+
+                encontrou = true;
+                int idVenda = resultado.getInt("idVenda");
+                Date data = resultado.getDate("dat");
+                String nomeProduto = resultado.getString("nomeProduto");
+                int quantidade = resultado.getInt("quantidade");
+                double preco = resultado.getDouble("precoProduto");
+                double total = resultado.getDouble("valorTotal");
+
+                System.out.println("Venda ID: " + idVenda + " | Data: " + data);
+                System.out.println("Produto: " + nomeProduto);
+                System.out.println("Quantidade: " + quantidade + " | Preço Unitário: R$" + preco);
+                System.out.println("Total da Venda: R$" + total);
+                System.out.println("---------------------------------------------");
+            }
+
+            if (!encontrou) {
+                System.out.println("Nenhuma venda encontrada para o cliente com ID: " + idCliente);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao gerar histórico.");
+            e.printStackTrace();
+        }
     }
 
 }
