@@ -19,7 +19,7 @@ public class Tratativas {
         do {
             login = leitor.nextLine().trim();
             if (login.contains(" ")) {
-                System.out.println("Login nao deve conter espaços em branco. \nDigite o seu login novamente.");
+                System.out.println("Login nao deve conter espaços em branco. \nDigite o seu login novament!");
             }
         } while (login.contains(" "));
         return login;
@@ -91,7 +91,7 @@ public class Tratativas {
             if (telefone.length() >= 10 && telefone.matches("[0-9]+")) {
                 return telefone;
             }
-            System.out.println("Numero inválido. Digite pelo menos 10 numeros.");
+            System.out.println("Numero inválido. Digite pelo menos 10 numeros! \nDigite o telefone: ");
         }
     }
 
@@ -105,7 +105,7 @@ public class Tratativas {
             try {
                 return LocalDate.parse(entrada, formatador);
             } catch (DateTimeParseException e) {
-                System.out.println("Data inválida! Formato correto: DD/MM/AAAA");
+                System.out.println("Data inválida! Formato correto: DD/MM/AAAA. ");
             }
         }
     }
@@ -129,7 +129,18 @@ public class Tratativas {
                     && !perfilUsuario.contains(" ")) {
                 return perfilUsuario.equalsIgnoreCase("sim");
             } else {
-                System.out.println("Entrada inválida. Digite apenas 'sim' ou 'nao', sem espaços.");
+                System.out.println("Entrada inválida. Digite apenas 'SIM' ou 'NAO', sem espaços.");
+            }
+        }
+    }
+
+    public static double lerValor(){
+        while (true) {
+            try {
+                String input = leitor.nextLine().trim().replace(",", ".");
+                return Double.parseDouble(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor, digite um número válido! \nInforme o valor novamente: ");
             }
         }
     }

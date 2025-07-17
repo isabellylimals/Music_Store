@@ -10,6 +10,8 @@ import src.models.ItemVenda;
 import src.models.Produto;
 import src.models.Venda;
 import java.sql.Date;
+
+
 public class VendaDao {
     public static void cadastrarVendaBanco(Venda venda, int idCliente, String nomeCliente, ItemVenda item) {
         String sql = "INSERT INTO vendas (idVenda, dat, valorTotal, idProduto, nomeProduto, precoProduto, quantidade, idCliente, nomeCliente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -32,13 +34,11 @@ public class VendaDao {
             comandoPreparado.setString(9, nomeCliente);
 
             comandoPreparado.executeUpdate();
-            System.out.println("Venda cadastrada com sucesso!");
 
         } catch (SQLException e) {
             System.out.println("Erro ao inserir cliente no banco: ");
             e.printStackTrace();
         }
-
     }
 
     public static int obterIdVendaBanco() {
@@ -62,21 +62,6 @@ public class VendaDao {
         }
     }
 
-    public static void atualizarEstoque(int id, int novoEstoque) {
-        String sql = "UPDATE produtos SET qtdEstoque = ? WHERE id = ?";
-        PreparedStatement comandoPreparado = null;
-
-        try {
-            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
-            comandoPreparado.setInt(1, novoEstoque);
-            comandoPreparado.setInt(2, id);
-            comandoPreparado.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Erro ao atualizar disponibilidade do produto.");
-            e.printStackTrace();
-        }
-    }
-
     public static void reporEstoque(int id, int quantidade) {
         String sql = "UPDATE produtos SET qtdEstoque = qtdEstoque + ? WHERE id = ?";
         PreparedStatement comandoPreparado = null;
@@ -85,6 +70,7 @@ public class VendaDao {
             comandoPreparado.setInt(1, quantidade);
             comandoPreparado.setInt(2, id);
             comandoPreparado.executeUpdate();
+            atualizarConformeEstoqueDisponibilidade(id);
         } catch (SQLException e) {
             System.out.println("Erro ao repor estoque.");
             e.printStackTrace();
@@ -92,74 +78,70 @@ public class VendaDao {
     }
 
     public static void reduzirEstoque(int id, int quantidade) {
-    String sql = "UPDATE produtos SET qtdEstoque = qtdEstoque - ? WHERE id = ?";
-    PreparedStatement comandoPreparado = null;
-    try  {
-        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
-        comandoPreparado.setInt(1, quantidade);
-        comandoPreparado.setInt(2, id);
-        comandoPreparado.executeUpdate();
-
-
-    } catch (SQLException e) {
-        System.out.println("Erro ao reduzir estoque.");
-        e.printStackTrace();
+        String sql = "UPDATE produtos SET qtdEstoque = qtdEstoque - ? WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
+        try  {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, quantidade);
+            comandoPreparado.setInt(2, id);
+            comandoPreparado.executeUpdate();
+            atualizarConformeEstoqueDisponibilidade(id);
+        } catch (SQLException e) {
+            System.out.println("Erro ao reduzir estoque.");
+            e.printStackTrace();
+        }
     }
-}
 
-
-   public static List<String> gerarRelatorioVendasCliente(int idCliente) {
-    String sql = """
+    public static List<String> gerarRelatorioVendasCliente(int idCliente) {
+        String sql = """
         SELECT idVenda, dat, nomeProduto, precoProduto, quantidade, valorTotal, nomeCliente
         FROM vendas
         WHERE idCliente = ?
         ORDER BY idVenda;
-    """;
+        """;
 
-    List<String> relatorio = new ArrayList<>();
-    PreparedStatement comandoPreparado = null;
+        List<String> relatorio = new ArrayList<>();
+        PreparedStatement comandoPreparado = null;
 
-    try {
-        comandoPreparado = Conexao.getConexao().prepareStatement(sql);
-        comandoPreparado.setInt(1, idCliente);
-        ResultSet resultado = comandoPreparado.executeQuery();
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, idCliente);
+            ResultSet resultado = comandoPreparado.executeQuery();
 
-        int vendaAtual = -1;
-        String nomeCliente = null;
+            int vendaAtual = -1;
+            String nomeCliente = null;
 
-        while (resultado.next()) {
-            int idVenda = resultado.getInt("idVenda");
-            String data = resultado.getString("dat");
-            String nomeProduto = resultado.getString("nomeProduto");
-            double preco = resultado.getDouble("precoProduto");
-            int qtd = resultado.getInt("quantidade");
-            double valorTotal = resultado.getDouble("valorTotal");
-            nomeCliente = resultado.getString("nomeCliente");
+            while (resultado.next()) {
+                int idVenda = resultado.getInt("idVenda");
+                String data = resultado.getString("dat");
+                String nomeProduto = resultado.getString("nomeProduto");
+                double preco = resultado.getDouble("precoProduto");
+                int qtd = resultado.getInt("quantidade");
+                double valorTotal = resultado.getDouble("valorTotal");
+                nomeCliente = resultado.getString("nomeCliente");
 
-            if (idVenda != vendaAtual) {
-                relatorio.add(""); 
-                relatorio.add(String.format("VENDA #%d | Data: %s | Cliente: %s", idVenda, data, nomeCliente));
-                relatorio.add("Produto                 | Preço   | Qtd | Total");
+                if (idVenda != vendaAtual) {
+                    relatorio.add(""); 
+                    relatorio.add(String.format("VENDA #%d | Data: %s | Cliente: %s", idVenda, data, nomeCliente));
+                    relatorio.add("Produto                 | Preço   | Qtd | Total");
         
-                vendaAtual = idVenda;
+                    vendaAtual = idVenda;
+                }
+
+                String linha = String.format("%-22s | R$%6.2f | %3d | R$%6.2f", nomeProduto, preco, qtd, valorTotal);
+                relatorio.add(linha);
             }
 
-            String linha = String.format("%-22s | R$%6.2f | %3d | R$%6.2f", nomeProduto, preco, qtd, valorTotal);
-            relatorio.add(linha);
+            if (relatorio.isEmpty()) {
+                relatorio.add("Nenhuma venda encontrada para este cliente.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        if (relatorio.isEmpty()) {
-            relatorio.add("Nenhuma venda encontrada para este cliente.");
-        }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return relatorio;
     }
-
-    return relatorio;
-}
-
-
 
     public static List<Integer> listarIdsClientesComVenda() {
         List<Integer> ListaDeIds = new ArrayList<>();
@@ -178,9 +160,6 @@ public class VendaDao {
 
         return ListaDeIds;
     }
-
-
-
 
     public static void gerarHistoricoVendas(int idCliente) {
         String sql = "SELECT idVenda, dat, nomeProduto, quantidade, precoProduto, valorTotal, nomeCliente "
@@ -222,6 +201,31 @@ public class VendaDao {
 
         } catch (SQLException e) {
             System.out.println("Erro ao gerar histórico.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void atualizarConformeEstoqueDisponibilidade(int id) {
+        String sql = "SELECT qtdEstoque, disponivel FROM produtos WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
+
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, id);
+            ResultSet resultado = comandoPreparado.executeQuery();
+
+            if (resultado.next()) {
+                int estoque = resultado.getInt("qtdEstoque");
+                boolean disponivel = resultado.getBoolean("disponivel");
+
+                if (estoque <= 0 && disponivel) {
+                    ProdutoDao.atualizarDisponibilidade(id, false);
+                } else if (estoque > 0 && !disponivel) {
+                    ProdutoDao.atualizarDisponibilidade(id, true);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar Disponibilidade.");
             e.printStackTrace();
         }
     }
