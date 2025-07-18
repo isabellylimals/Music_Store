@@ -155,6 +155,32 @@ public class ClienteDao {
             comandoPreparado.setBoolean(1, status);
             comandoPreparado.setInt(2, id);
             comandoPreparado.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar status do cliente.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void atualizarStatusConformeAtividade(int id) {
+        String sql = "SELECT stats FROM clientes WHERE id = ?";
+        PreparedStatement comandoPreparado = null;
+        try {
+            comandoPreparado = Conexao.getConexao().prepareStatement(sql);
+            comandoPreparado.setInt(1, id);
+            ResultSet resultado = comandoPreparado.executeQuery();
+
+            if (resultado.next()) {
+                boolean statusConta = resultado.getBoolean("stats");
+                atualizarStatus(id, !statusConta);
+                boolean novoStatus = !statusConta;
+                String mensagem = novoStatus ? "Conta ativada com sucesso." : "Conta desativada com sucesso.";
+                System.out.println(mensagem);
+
+            } else {
+                System.out.println("Cliente com id " + id + " não encontrado.");
+            }
+
         } catch (SQLException e) {
             System.out.println("Erro ao atualizar status do cliente.");
             e.printStackTrace();

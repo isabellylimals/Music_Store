@@ -33,7 +33,6 @@ public class Cliente extends Pessoa {
         return ClienteDao.buscar(id);
     }
 
-
     public void exibirDadosCadastrais(int id) {
         Cliente clienteEncontrado = buscarClientePorId(id);
 
@@ -48,7 +47,6 @@ public class Cliente extends Pessoa {
             System.out.println("Cliente não encontrado!");
         }
     }
-
 
     public void alterarCadastro(int id, String novoNome, String novoEmail, String novaSenha, String novoTelefone) {
         Cliente clienteEncontrado = ClienteDao.buscar(id);
@@ -73,11 +71,7 @@ public class Cliente extends Pessoa {
         Cliente clienteEncontrado = ClienteDao.buscar(id);
 
         if (clienteEncontrado != null) {
-            clienteEncontrado.setStatus(false);
-
-            ClienteDao.atualizarStatus(clienteEncontrado.getId(), false);
-
-            System.out.println("Cliente removido com sucesso.");
+            ClienteDao.atualizarStatusConformeAtividade(clienteEncontrado.getId());
         } else {
             System.out.println("Cliente não encontrado.");
         }
@@ -95,7 +89,8 @@ public class Cliente extends Pessoa {
         System.out.println("---------------------------------------------------------------");
 
         for (Cliente cliente : listaDeClientes) {
-            System.out.printf("ID: %d | Nome: %s | Email: %s%n", cliente.getId(), cliente.getNome(), cliente.getEmail());
+            System.out.printf("ID: %d | Nome: %s | Email: %s%n", cliente.getId(), cliente.getNome(),
+                    cliente.getEmail());
             System.out.printf("Telefone: %s | Status: %s%n",
                     cliente.getTelefone(), cliente.getStatus());
             System.out.println("---------------------------------------------------------------");
