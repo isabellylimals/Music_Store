@@ -174,8 +174,7 @@ public class Venda {
 
     private static Cliente solicitarCliente(Scanner leitor) {
         System.out.print("Digite o ID do cliente que está comprando: ");
-        int idCliente = leitor.nextInt();
-        leitor.nextLine();
+        int idCliente = Tratativas.lerInteiro();
 
         Cliente cliente = ClienteDao.buscar(idCliente);
         if (cliente == null) {
@@ -189,8 +188,7 @@ public class Venda {
         Produto.exibirProdutosCliente();
 
         System.out.print("Digite o ID do produto que deseja comprar: ");
-        int id = leitor.nextInt();
-        leitor.nextLine();
+        int id = Tratativas.lerInteiro();
 
         Produto produto = Produto.buscarProdutoPorId(id);
         if (produto == null || !produto.isDisponivel() || produto.getQtdEstoque() <= 0) {
@@ -205,8 +203,7 @@ public class Venda {
         int qtd;
         do {
             System.out.print("Digite a quantidade que deseja comprar: ");
-            qtd = leitor.nextInt();
-            leitor.nextLine();
+            qtd = Tratativas.lerInteiro();
 
             if (qtd <= 0 || qtd > produto.getQtdEstoque()) {
                 System.out.println("Quantidade inválida! Estoque disponível: " + produto.getQtdEstoque());
@@ -240,8 +237,7 @@ public class Venda {
         }
 
         System.out.print("Digite o ID do produto que deseja remover: ");
-        int idRemover = leitor.nextInt();
-        leitor.nextLine(); 
+        int idRemover = Tratativas.lerInteiro();
 
         venda.removerItem(idRemover);
 
