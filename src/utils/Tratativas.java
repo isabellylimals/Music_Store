@@ -9,10 +9,6 @@ public class Tratativas {
 
     public static Scanner leitor = new Scanner(System.in);
 
-    public static void fecharScanner() {
-        leitor.close();
-    }
-
     public static String lerLogin() {
         String login;
 
@@ -46,10 +42,8 @@ public class Tratativas {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
 
-                /* Cria um processo do sistema operacional */
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             } else {
-                // Código ANSI para sistemas Unix-like
                 System.out.print("\033[H\033[2J");
                 System.out.flush();
             }
@@ -85,13 +79,15 @@ public class Tratativas {
     }
 
     public static String lerTelefone() {
+
         while (true) {
             String telefone = leitor.nextLine().trim().replaceAll("[^0-9]", "");
 
-            if (telefone.length() >= 10 && telefone.matches("[0-9]+")) {
+            if ((telefone.length() == 10 || telefone.length() == 11) && telefone.matches("[0-9]+")) {
                 return telefone;
             }
-            System.out.println("Numero inválido. Digite pelo menos 10 numeros! \nDigite o telefone: ");
+
+            System.out.println("Número inválido. Digite um telefone com 10 ou 11 dígitos (apenas números): ");
         }
     }
 
@@ -115,7 +111,7 @@ public class Tratativas {
     }
 
     public static boolean validarEmail(String email) {
-        return email.matches("^[\\w](\\.?[\\w-])*@[\\w-]+\\.[a-zA-Z]{2,}$");
+        return email.matches("^[\\w](\\.?[\\w-])*@(gmail|hotmail)\\.com(\\.br)?$");
     }
 
     public static boolean verificaEscolha(String texto) {
@@ -134,7 +130,7 @@ public class Tratativas {
         }
     }
 
-    public static double lerValor(){
+    public static double lerValor() {
         while (true) {
             try {
                 String input = leitor.nextLine().trim().replace(",", ".");

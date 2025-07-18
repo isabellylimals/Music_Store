@@ -59,6 +59,8 @@ public class ClienteView {
 
                 case 0:
                     System.out.println("Saindo do menu do cliente...");
+                    Tratativas.limparTela();
+
                     break;
 
                 default:
@@ -133,6 +135,7 @@ public class ClienteView {
 
                 case 0:
                     System.out.println("Saindo do menu de consulta de produtos...");
+                    Tratativas.limparTela();
                     break;
 
                 default:

@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import src.utils.sons.vendafinalizada.*;
-
+import src.utils.Tratativas;
 public class Venda {
     private int id;
     private Date data;
@@ -77,7 +77,7 @@ public class Venda {
                     " = R$ " + item.calcularSubTotal());
         }
         System.out.printf("Total: R$ %.2f\n", valorTotal);
-        System.out.println("=============================");
+        System.out.println("===========================");
     }
 
     public void adicionarItemVenda(ItemVenda item) {
@@ -125,7 +125,7 @@ public class Venda {
 
         Venda venda = new Venda(new Date(), cliente);
 
-        String continuar = "s";
+        String continuar = "sim";
         do {
             Produto produto = solicitarProduto(leitor);
             if (produto == null)
@@ -143,9 +143,9 @@ public class Venda {
                 System.out.println("Erro ao reduzir estoque.");
             }
 
-            System.out.print("Deseja adicionar outro produto? (s/n): ");
-            continuar = leitor.nextLine();
-        } while (continuar.equalsIgnoreCase("s"));
+            boolean adicionarMais = Tratativas.verificaEscolha("Deseja adicionar outro produto (sim/nao)");
+            continuar = adicionarMais ? "sim" : "nao";
+        } while (continuar.equalsIgnoreCase("sim"));
 
         TirarItemdaCompra(leitor, venda);
 
@@ -159,7 +159,7 @@ public class Venda {
         for (ItemVenda item : venda.getItensVenda()) {
             VendaDao.cadastrarVendaBanco(venda, cliente.getId(), cliente.getNome(), item);
         }
-         SomUtil.carregarSom("src/utils/sons/vendafinalizada/venda.wav");
+        SomUtil.carregarSom("src/utils/sons/vendafinalizada/venda.wav");
 
         System.out.println("Venda finalizada e salva com sucesso!");
         SomUtil.tocarSom();
@@ -217,33 +217,37 @@ public class Venda {
     }
 
     private static void TirarItemdaCompra(Scanner leitor, Venda venda) {
-        String resposta;
-        do {
-            System.out.print("Deseja remover algum item antes de finalizar a venda? (s/n): ");
-            resposta = leitor.nextLine();
+    boolean desejaRemover;
 
-            if (!resposta.equalsIgnoreCase("s"))
-                break;
-                if (venda.getItensVenda().isEmpty()) {
-                System.out.println("Nenhum item na venda para remover.");
-                return;}
+    do {
+        desejaRemover = Tratativas.verificaEscolha("Deseja remover algum item antes de finalizar a venda? (sim/nao)");
 
-            System.out.println("Itens adicionados à venda:");
-            for (ItemVenda item : venda.getItensVenda()) {
-                if (item.isAtivo()) {
-                    System.out.println("- Produto ID " + item.getProduto().getId() + ": " +
-                            item.getProduto().getNome() + " x" + item.getQuantidade());
-                }
+        if (!desejaRemover){
+            break;
+        }
+
+        if (venda.getItensVenda().isEmpty()) {
+            System.out.println("Nenhum item na venda para remover.");
+            return;
+        }
+
+        System.out.println("Itens adicionados à venda:");
+        for (ItemVenda item : venda.getItensVenda()) {
+            if (item.isAtivo()) {
+                System.out.println("- Produto ID " + item.getProduto().getId() + ": " +
+                        item.getProduto().getNome() + " x" + item.getQuantidade());
             }
+        }
 
-            System.out.print("Digite o ID do produto que deseja remover: ");
-            int idRemover = leitor.nextInt();
-            leitor.nextLine();
+        System.out.print("Digite o ID do produto que deseja remover: ");
+        int idRemover = leitor.nextInt();
+        leitor.nextLine(); 
 
-            venda.removerItem(idRemover);
+        venda.removerItem(idRemover);
 
-        } while (true);
-    }
+    } while (true);
+}
+
 
     public void removerItem(int idProcurar) {
         boolean itemRemovido = false;
