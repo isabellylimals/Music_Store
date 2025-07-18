@@ -1,15 +1,13 @@
 
 package DAO;
 
-import src.models.Cliente;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import src.conection.Conexao;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import src.models.Cliente;
 
 public class ClienteDao {
 
@@ -29,7 +27,6 @@ public class ClienteDao {
             comandoPreparado.setBoolean(7, cliente.isAtivo());
 
             comandoPreparado.executeUpdate();
-            System.out.println("Usuario cadastrado com sucesso!");
 
         } catch (SQLException e) {
             System.out.println("Erro ao inserir cliente no banco: ");

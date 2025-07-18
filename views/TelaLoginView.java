@@ -5,6 +5,7 @@ import java.util.Scanner;
 import src.models.Cliente;
 import src.models.Produto;
 import src.utils.Tratativas;
+import src.utils.sons.entranaconta.SomUtil;
 
 public class TelaLoginView {
     public static void executarMenuLogin(Scanner scanner) {
@@ -19,7 +20,8 @@ public class TelaLoginView {
                 case 1:
                     String email;
                     do {
-                        System.out.print("Digite o novo email: ");
+                         
+                        System.out.print("Digite o email: ");
                         email = scanner.nextLine();
                         if (!Tratativas.validarEmail(email)) {
                             System.out.println("Email inválido! Tente novamente.");
@@ -33,7 +35,9 @@ public class TelaLoginView {
 
                     if (usuarioEncontrado != null) {
                         if (usuarioEncontrado.login(email, senha)) {
+                             SomUtil.carregarSom("src/utils/sons/entranaconta/conta.wav");
                             System.out.println("Login autorizado!");
+                            SomUtil.tocarSom();
                            
                             Produto.carregarProdutosDoBanco();
 
@@ -81,7 +85,7 @@ public class TelaLoginView {
 
                     ClienteDao.cadastrar(usuario);
 
-                    System.out.println("Conta criada com sucesso!");
+        
                     break;
 
                 case 0:

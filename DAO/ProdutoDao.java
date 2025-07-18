@@ -1,13 +1,12 @@
 package DAO;
 
-import src.models.Produto;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import src.conection.Conexao;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import src.models.Produto;
 
 public class ProdutoDao {
     public static void cadastrar(Produto produto) {
@@ -27,7 +26,7 @@ public class ProdutoDao {
             comandoPreparado .setBoolean(8, produto.isDisponivel());
 
             comandoPreparado.executeUpdate();
-            System.out.println("Produto inserido com sucesso no banco!");
+            
 
         } catch (SQLException e) {
             System.out.println("Erro ao inserir produto no banco: ");

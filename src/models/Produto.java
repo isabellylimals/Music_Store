@@ -149,7 +149,7 @@ public class Produto {
         listaDeProdutos.add(produto);
         ProdutoDao.cadastrar(produto);
 
-        System.out.println("O produto " + produto.getNome() + " foi cadastrado com sucesso");
+        System.out.println("O produto " + "|" + produto.getNome() + "|" + " foi cadastrado com sucesso");
     }
 
     public static Produto buscarProdutoPorId(int id) {

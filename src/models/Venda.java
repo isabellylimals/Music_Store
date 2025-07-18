@@ -1,12 +1,12 @@
 package src.models;
 
 import DAO.ClienteDao;
-
 import DAO.VendaDao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import src.utils.sons.vendafinalizada.*;
 
 public class Venda {
     private int id;
@@ -101,7 +101,7 @@ public class Venda {
     public static String gerarRelatorioVendas() {
         List<Integer> idsClientes = VendaDao.listarIdsClientesComVenda();
         StringBuilder relatorio = new StringBuilder(
-                "======================================\nRELATÓRIO DE VENDAS POR CLIENTE:");
+                "======================================\nRELATÓRIO DE VENDAS:");
 
         if (idsClientes.isEmpty()) {
             return "Nenhuma venda foi realizada por nenhum cliente.";
@@ -159,7 +159,10 @@ public class Venda {
         for (ItemVenda item : venda.getItensVenda()) {
             VendaDao.cadastrarVendaBanco(venda, cliente.getId(), cliente.getNome(), item);
         }
+         SomUtil.carregarSom("src/utils/sons/vendafinalizada/venda.wav");
+
         System.out.println("Venda finalizada e salva com sucesso!");
+        SomUtil.tocarSom();
         venda.exibirResumo();
     }
 
@@ -221,6 +224,9 @@ public class Venda {
 
             if (!resposta.equalsIgnoreCase("s"))
                 break;
+                if (venda.getItensVenda().isEmpty()) {
+                System.out.println("Nenhum item na venda para remover.");
+                return;}
 
             System.out.println("Itens adicionados à venda:");
             for (ItemVenda item : venda.getItensVenda()) {

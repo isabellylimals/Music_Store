@@ -1,8 +1,7 @@
 package views;
 
-import java.util.Scanner;
-
 import DAO.ProdutoDao;
+import java.util.Scanner;
 import src.models.Cliente;
 import src.models.Produto;
 import src.models.Venda;
@@ -168,8 +167,10 @@ public class AdministratorView {
             opcao = Tratativas.lerInteiro();
             switch (opcao) {
                 case 1:
+        
                     Venda.finalizarVenda(scanner);
                     Produto.carregarProdutosDoBanco();
+                 
                     break;
                 case 2:
                 System.out.println(Venda.gerarRelatorioVendas());
