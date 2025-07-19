@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 import src.utils.sons.vendafinalizada.*;
 import src.utils.Tratativas;
+
 public class Venda {
     private int id;
     private Date data;
@@ -101,7 +102,7 @@ public class Venda {
     public static String gerarRelatorioVendas() {
         List<Integer> idsClientes = VendaDao.listarIdsClientesComVenda();
         StringBuilder relatorio = new StringBuilder(
-                "======================================\nRELATÓRIO DE VENDAS:");
+                "\n\n======================================\nRELATÓRIO DE VENDAS");
 
         if (idsClientes.isEmpty()) {
             return "Nenhuma venda foi realizada por nenhum cliente.";
@@ -138,6 +139,7 @@ public class Venda {
             boolean sucesso = produto.reduzirEstoque(produto.getId(), quantidade);
             if (sucesso) {
                 venda.adicionarItemVenda(new ItemVenda(quantidade, produto));
+                Tratativas.limparTela();
                 System.out.println("Item adicionado à venda.");
             } else {
                 System.out.println("Erro ao reduzir estoque.");
@@ -214,36 +216,36 @@ public class Venda {
     }
 
     private static void TirarItemdaCompra(Scanner leitor, Venda venda) {
-    boolean desejaRemover;
+        boolean desejaRemover;
 
-    do {
-        desejaRemover = Tratativas.verificaEscolha("Deseja remover algum item antes de finalizar a venda? (sim/nao)");
+        do {
+            desejaRemover = Tratativas
+                    .verificaEscolha("Deseja remover algum item antes de finalizar a venda? (sim/nao)");
 
-        if (!desejaRemover){
-            break;
-        }
-
-        if (venda.getItensVenda().isEmpty()) {
-            System.out.println("Nenhum item na venda para remover.");
-            return;
-        }
-
-        System.out.println("Itens adicionados à venda:");
-        for (ItemVenda item : venda.getItensVenda()) {
-            if (item.isAtivo()) {
-                System.out.println("- Produto ID " + item.getProduto().getId() + ": " +
-                        item.getProduto().getNome() + " x" + item.getQuantidade());
+            if (!desejaRemover) {
+                break;
             }
-        }
 
-        System.out.print("Digite o ID do produto que deseja remover: ");
-        int idRemover = Tratativas.lerInteiro();
+            if (venda.getItensVenda().isEmpty()) {
+                System.out.println("Nenhum item na venda para remover.");
+                return;
+            }
 
-        venda.removerItem(idRemover);
+            System.out.println("Itens adicionados à venda:");
+            for (ItemVenda item : venda.getItensVenda()) {
+                if (item.isAtivo()) {
+                    System.out.println("- Produto ID " + item.getProduto().getId() + ": " +
+                            item.getProduto().getNome() + " x" + item.getQuantidade());
+                }
+            }
 
-    } while (true);
-}
+            System.out.print("Digite o ID do produto que deseja remover: ");
+            int idRemover = Tratativas.lerInteiro();
 
+            venda.removerItem(idRemover);
+
+        } while (true);
+    }
 
     public void removerItem(int idProcurar) {
         boolean itemRemovido = false;

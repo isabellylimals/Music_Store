@@ -23,7 +23,7 @@ public class AdministratorView {
                     executarMenuVenda(scanner);
                     break;
                 case 3:
-                System.out.println("=== Cadastro de Cliente ===");
+                System.out.println("\n=== Cadastro de Cliente ===");
                 System.out.print("Digite o nome: ");
                     String nome = scanner.nextLine();
                     String email;
@@ -51,6 +51,7 @@ public class AdministratorView {
                     break;
                 case 0:
                     System.out.println("Saindo do menu de Administrador...");
+                    Tratativas.limparTela();
                     break;
                 default:
                     System.out.println("Valor inválido.");
@@ -67,7 +68,7 @@ public class AdministratorView {
 
             switch (opcao) {
                 case 1:
-                    System.out.println("=== Cadastro de Produto ===");
+                    System.out.println("\n=== Cadastro de Produto ===");
                     System.out.print("Nome: ");
                     String nome = scanner.nextLine();
                     System.out.print("Gênero: ");

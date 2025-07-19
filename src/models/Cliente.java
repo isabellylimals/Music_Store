@@ -37,7 +37,7 @@ public class Cliente extends Pessoa {
         Cliente clienteEncontrado = buscarClientePorId(id);
 
         if (clienteEncontrado != null) {
-            System.out.println("Informações do cliente:");
+            System.out.println("\n Informações do cliente:");
             System.out.println("ID: " + clienteEncontrado.getId());
             System.out.println("Nome completo: " + clienteEncontrado.getNome());
             System.out.println("Endereço de e-mail: " + clienteEncontrado.getEmail());

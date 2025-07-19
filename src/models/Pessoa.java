@@ -5,7 +5,7 @@ public class Pessoa {
   private String email;
   private int id;
   private String senha;
-  private boolean administrador; 
+  private boolean administrador;
   private boolean status;
 
   public Pessoa(String nome, String email, int id, String senha, boolean administrador) {
@@ -14,7 +14,7 @@ public class Pessoa {
     this.id = id;
     this.senha = senha;
     this.administrador = administrador;
-    this.status=true;
+    this.status = true;
   }
 
   public String getNome() {
@@ -46,7 +46,7 @@ public class Pessoa {
   }
 
   public void setEmail(String email) {
-    if (email ==null || !email.contains("@")){
+    if (email == null || !email.contains("@")) {
       throw new IllegalArgumentException("Email inválido");
     }
     this.email = email;
@@ -68,27 +68,28 @@ public class Pessoa {
     this.administrador = "Sim".equalsIgnoreCase(administrador);
   }
 
-  public boolean isAtivo(){
+  public boolean isAtivo() {
     return status;
   }
+
   public void setStatus(boolean status) {
-      this.status = status;
+    this.status = status;
   }
 
-  public void ativaConta(){
-    this.status=true;
+  public void ativaConta() {
+    this.status = true;
     System.out.println("Conta ativa com sucesso!");
   }
 
   public String getStatus() {
-      return status ? "Ativo" : "Inativo";
+    return status ? "Ativo" : "Inativo";
   }
 
   public boolean login(String email, String senha) {
-      if (!this.status) {
-          return false;
-      }
-      return this.email.equals(email) && this.senha.equals(senha);
+    if (!this.status) {
+      return false;
+    }
+    return this.email.equals(email) && this.senha.equals(senha);
   }
 
   public void criarNovoLogin(String email, String senha) {

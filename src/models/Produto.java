@@ -40,8 +40,8 @@ public class Produto {
         System.out.println("Quantidade em Estoque: " + qtdEstoque);
     }
 
-   public static void carregarProdutosDoBanco() {
-    List<Produto> produtosDoBanco = ProdutoDao.listarTodos();
+    public static void carregarProdutosDoBanco() {
+        List<Produto> produtosDoBanco = ProdutoDao.listarTodos();
         for (Produto produtoBanco : produtosDoBanco) {
             boolean atualizado = false;
             for (int i = 0; i < listaDeProdutos.size(); i++) {
