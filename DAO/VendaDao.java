@@ -22,7 +22,7 @@ public class VendaDao {
             comandoPreparado = Conexao.getConexao().prepareStatement(sql);
 
             comandoPreparado.setInt(1, venda.getId());
-            comandoPreparado.setDate(2, new java.sql.Date(venda.getData().getTime())); // ano-mes-dia
+            comandoPreparado.setDate(2, new java.sql.Date(venda.getData().getTime())); 
             comandoPreparado.setDouble(3, venda.getValorTotal());
 
             comandoPreparado.setInt(4, produto.getId());
@@ -58,7 +58,7 @@ public class VendaDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            return 1; // fallback
+            return 1; 
         }
     }
 

@@ -21,8 +21,9 @@ public class Cliente extends Pessoa {
         this.telefone = telefone;
     }
 
-    public static void cadastrarCliente(String nome, String email, String senha, String telefone) {
+    public static void cadastrarCliente(String nome, String email, String senha, String telefone, boolean administrador) {
         Cliente novoCliente = new Cliente(nome, email, senha, telefone);
+        novoCliente.setAdministrador(administrador);
 
         ClienteDao.cadastrar(novoCliente);
 
@@ -37,7 +38,7 @@ public class Cliente extends Pessoa {
         Cliente clienteEncontrado = buscarClientePorId(id);
 
         if (clienteEncontrado != null) {
-            System.out.println("\n Informações do cliente:");
+            System.out.println("\nInformações do cliente:");
             System.out.println("ID: " + clienteEncontrado.getId());
             System.out.println("Nome completo: " + clienteEncontrado.getNome());
             System.out.println("Endereço de e-mail: " + clienteEncontrado.getEmail());

@@ -14,7 +14,7 @@ public class TelaLoginView {
             MenuUtils.exibirMenulogin();
 
             System.out.print("Informe a opção: ");
-            opcao = Tratativas.lerInteiro();
+            opcao = Tratativas.lerInteiro("Informe a opção novamente");
 
             switch (opcao) {
                 case 1:
@@ -80,10 +80,7 @@ public class TelaLoginView {
 
                     boolean isAdministrador = Tratativas.verificaEscolha("O usuário é administrador (sim/nao)");
 
-                    Cliente usuario = new Cliente(novoNome, novoEmail, novaSenha, novoTelefone);
-                    usuario.setAdministrador(isAdministrador);
-
-                    ClienteDao.cadastrar(usuario);
+                    Cliente.cadastrarCliente(novoNome, novoEmail, novaSenha, novoTelefone, isAdministrador);
 
         
                     break;

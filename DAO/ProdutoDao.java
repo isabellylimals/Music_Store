@@ -151,7 +151,7 @@ public static boolean atualizarProduto(Produto produto) {
             comandoPreparado.setBoolean(7, produto.isDisponivel());
             comandoPreparado.setInt(8, produto.getId());
 
-            int linhasAfetadas = comandoPreparado.executeUpdate();//retorna o numero de linhas afetadas
+            int linhasAfetadas = comandoPreparado.executeUpdate();
             return linhasAfetadas > 0;
 
         } catch (SQLException e) {
@@ -224,7 +224,7 @@ public static List<Produto> buscarPorGenero(String generoBusca) {
 }
 
 
-// Utilitário para evitar duplicação de código
+
 private static Produto criarProdutoDoResultSet(ResultSet resultado) throws SQLException {
     int id = resultado.getInt("id");
     String nome = resultado.getString("nome");

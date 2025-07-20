@@ -16,7 +16,7 @@ public class ClienteView {
         do {
             MenuUtils.exibirMenuCliente();
             System.out.print("Escolha uma opção: ");
-            opcao = Tratativas.lerInteiro();
+            opcao = Tratativas.lerInteiro("Informe a opção novamente");
 
             switch (opcao) {
                 case 1:
@@ -75,7 +75,7 @@ public class ClienteView {
         do {
             MenuUtils.exibirMenuConsultaDeProdutos();
             System.out.print("Escolha uma opção: ");
-            opcao = Tratativas.lerInteiro();
+            opcao = Tratativas.lerInteiro("Informe a opção novamente");
 
             switch (opcao) {
                 case 1:

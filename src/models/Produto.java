@@ -128,18 +128,22 @@ public class Produto {
     }
 
     public static void excluirProduto(int id) {
-        Produto produto = buscarPorId(id);
-        if (produto != null) {
-            produto.setDisponivel(false);
-
-            ProdutoDao.atualizarDisponibilidade(id, false);
-
-            carregarProdutosDoBanco();
-
-        } else {
-            System.out.println("Produto não encontrado.");
+    Produto produto = buscarPorId(id);
+    if (produto != null) {
+        if (!produto.isDisponivel()) {
+            System.out.println("O produto já está inativo.");
+            return;
         }
+
+        produto.setDisponivel(false);
+        ProdutoDao.atualizarDisponibilidade(id, false);
+        System.out.println("Produto inativado com sucesso.");
+        carregarProdutosDoBanco();
+    } else {
+        System.out.println("Produto não encontrado.");
     }
+}
+
 
     public static void cadastrarProduto(Produto produto) {
         int proximoId = ProdutoDao.obterId();

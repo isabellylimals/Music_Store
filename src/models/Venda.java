@@ -74,8 +74,10 @@ public class Venda {
         System.out.println("Itens da venda:");
 
         for (ItemVenda item : itensVenda) {
-            System.out.println("- " + item.getProduto().getNome() + " x" + item.getQuantidade() +
-                    " = R$ " + item.calcularSubTotal());
+            System.out.print("- " + item.getProduto().getNome() + " x" + item.getQuantidade() +
+                    " = R$ " );
+            System.out.printf("%.2f", item.calcularSubTotal());
+            System.out.println();
         }
         System.out.printf("Total: R$ %.2f\n", valorTotal);
         System.out.println("===========================");
@@ -139,7 +141,6 @@ public class Venda {
             boolean sucesso = produto.reduzirEstoque(produto.getId(), quantidade);
             if (sucesso) {
                 venda.adicionarItemVenda(new ItemVenda(quantidade, produto));
-                Tratativas.limparTela();
                 System.out.println("Item adicionado à venda.");
             } else {
                 System.out.println("Erro ao reduzir estoque.");
@@ -176,7 +177,7 @@ public class Venda {
 
     private static Cliente solicitarCliente(Scanner leitor) {
         System.out.print("Digite o ID do cliente que está comprando: ");
-        int idCliente = Tratativas.lerInteiro();
+        int idCliente = Tratativas.lerInteiro("Infome o Id novamente");
 
         Cliente cliente = ClienteDao.buscar(idCliente);
         if (cliente == null) {
@@ -190,7 +191,7 @@ public class Venda {
         Produto.exibirProdutosCliente();
 
         System.out.print("Digite o ID do produto que deseja comprar: ");
-        int id = Tratativas.lerInteiro();
+        int id = Tratativas.lerInteiro("Infome o Id novamente");
 
         Produto produto = Produto.buscarProdutoPorId(id);
         if (produto == null || !produto.isDisponivel() || produto.getQtdEstoque() <= 0) {
@@ -205,7 +206,7 @@ public class Venda {
         int qtd;
         do {
             System.out.print("Digite a quantidade que deseja comprar: ");
-            qtd = Tratativas.lerInteiro();
+            qtd = Tratativas.lerInteiro("Infome a quantidade que deseja comprar novamente");
 
             if (qtd <= 0 || qtd > produto.getQtdEstoque()) {
                 System.out.println("Quantidade inválida! Estoque disponível: " + produto.getQtdEstoque());
@@ -219,8 +220,7 @@ public class Venda {
         boolean desejaRemover;
 
         do {
-            desejaRemover = Tratativas
-                    .verificaEscolha("Deseja remover algum item antes de finalizar a venda? (sim/nao)");
+            desejaRemover = Tratativas.verificaEscolha("Deseja remover algum item antes de finalizar a venda? (sim/nao)");
 
             if (!desejaRemover) {
                 break;
@@ -240,7 +240,7 @@ public class Venda {
             }
 
             System.out.print("Digite o ID do produto que deseja remover: ");
-            int idRemover = Tratativas.lerInteiro();
+            int idRemover = Tratativas.lerInteiro("Infome o Id novamente");
 
             venda.removerItem(idRemover);
 
