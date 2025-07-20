@@ -1,39 +1,50 @@
 # 🎵 Music Store
 
 ## Descrição
-O **Music Store** é um sistema de gerenciamento completo para lojas especializadas em mídias físicas musicais (vinis, CDs, fitas cassete). O sistema otimiza processos de vendas, controle de estoque e geração de relatórios, proporcionando eficiência operacional e melhor experiência para clientes e administradores.
+O **Music Store** é um sistema de gerenciamento completo para lojas especializadas em mídias físicas musicais (vinis, CDs, fitas cassete). Além de otimizar processos de vendas, realiza o controle de estoque e geração de relatórios. Com isso, garante eficiência operacional e melhor experiência para clientes e administradores.
 
 ---
 
 ## Funcionalidades Principais
+### **Administrador**
 
-### Gerenciamento de Produtos
-- Cadastro de mídias musicais (vinil, CD, fita)
-- Controle de estoque 
-- Busca por artista, gênero ou título
-- Atualização de preços e categorias
+### Gerenciamento de Produtos;
+- Cadastrar mídias musicais (vinil, CD, fita);
+- Exibir informações por produto;
+- Repor estoque;
+- Buscar produto por id;
+- Listar todos os produtos cadastrados;
+- Atualizar o produto;
+- Inativar produto.
 
 ### Gestão de Vendas
-- Processamento de vendas com múltiplos itens
-- Cálculo automático de subtotais e total
-- Histórico completo de vendas
-- Emissão de recibos
+- Processar vendas com múltiplos itens;
+- Calcular de forma automática subtotais e total;
+- Gerar relatório das vendas realizadas;
+- Emitir do resumo da venda atual;
+- Remover ou adicionar itens antes da confirmação.
 
-###  Cadastro de Clientes
-- Registro de dados pessoais
-- Histórico de compras por cliente
-- Sistema de autenticação segura
+### Cadastro de Clientes
+- Cadastrar novo cliente;
+- Listar clientes cadastrados.
 
-###  Relatórios Gerenciais
-- Vendas por período/artista/gênero
-- Estoque crítico 
-- Clientes mais frequentes
+### Relatórios Gerenciais
+- Administrador pode realizar venda em cliente;
+- Imprimir o histórico de vendas.
 
+### **(Cliente)**
 
-###  Controle de Acesso
-- Níveis de permissão (admin/cliente)
-- Login seguro para clientes
-- Área restrita para administradores
+### Login de cliente
+- Registrar dados pessoais;
+- Visualizar histórico de compras por cliente;
+- Buscar produtos por nome, artista, gênero ou listagem de produtos;
+- Atualizar status da conta;
+- Alterar dados cadastrais.
+
+### Controle de Acesso
+- Níveis de permissão (admin/cliente): Por meio do login;
+- **Clientes**: Acesso a busca de produtos disponíveis, pesquisar pelo nome, gênero ou artista, gerenciamento da própria conta e histórico de compras realizadas;
+- **Administradores**: acesso ao gerenciamento de produtos por meio de id e de vendas, cadastro de novos clientes e listagem de  todos os clientes cadastrados.
 
 ---
 
@@ -58,8 +69,7 @@ classDiagram
         +calcularSubtotal() double
     }
 
-    class Person {
-        <<abstract>>
+    class Pessoa {
         -id: int
         -nome: String
         -email: String
@@ -76,6 +86,7 @@ classDiagram
         +consultarTodosClientes() void
         +alterarCadastro() void
         +removerCliente() void
+        +buscarClientePorId(int id) Cliente
     }
 
     class Produto {
@@ -92,11 +103,15 @@ classDiagram
         +exibirTodosProdutos() void
         +alterarProduto() void
         +excluirProduto() void
+        +buscarProdutoPorId(int id) List Produto
+        +buscarProdutoPorNome(String nomeBusca) List Produto
+        +buscarProdutoPorArtista(String artistaBusca) List Produto
+        +buscarProdutoPorGenero(String generoBusca) List Produto 
     }
 
     
-    Venda "1.1  " *-- * "1..*" ItemVenda :  
-    Cliente --|> Person :  
+    Venda "1.1  " *--  "1..*" ItemVenda :  
+    Cliente --|> Pessoa :  
     ItemVenda "0..*" --*"1.1  " Produto :  
     Cliente "1.1  " -- "0..*  " Venda :  
 
@@ -112,7 +127,7 @@ classDiagram
 
 ### **Banco de Dados**
 - MySQL 8.0+
-- Flyway para migrações
+- Railway para migrações
 
 ---
 
@@ -128,8 +143,9 @@ classDiagram
 # Clone o repositório
 [git clone https://github.com/isabellylimals/Music_Store]
 
-# Configure o banco de dados
-
+# Terminal
+passo 1: javac -d bin -cp "lib/mysql-connector-j-9.3.0.jar" DAO/*.java @(Get-ChildItem -Recurse -Filter *.java -Path src,views | ForEach-Object { $_.FullName })
+passo 2: java -cp "bin;lib/mysql-connector-j-9.3.0.jar" src.models.Main
 ```
 
 ## Equipe de Desenvolvimento
